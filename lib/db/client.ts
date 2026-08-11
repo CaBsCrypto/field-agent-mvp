@@ -1,38 +1,19 @@
-﻿/**
- * @file lib/db/client.ts
- * @description Supabase client singleton for FieldAgentMVP.
- * Uses the service-role key so it bypasses RLS — only call from server-side code.
- */
-
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-
-let _client: SupabaseClient | null = null;
+import { neon } from "@neondatabase/serverless";
 
 /**
- * Returns a singleton Supabase client initialised with the service-role key.
- * Never exposes this to the browser — server-side only.
- *
- * @throws {Error} When the required env vars are missing.
+ * Returns a Neon Serverless SQL query executor.
+ * Automatically checks POSTGRES_URL or DATABASE_URL (set by Vercel Postgres / Neon integration).
  */
-export function getSupabaseClient(): SupabaseClient {
-  if (_client) return _client;
-
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!url || !key) {
-    throw new Error(
-      '[FieldAgent] Missing env vars: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required.'
-    );
+export function getNeonSql() {
+  const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+  
+  if (!connectionString) {
+    // Graceful fallback for mock mode if DB is not attached yet
+    return async (query: string, params: any[] = []) => {
+      console.warn("[Neon DB] No POSTGRES_URL configured. Running in fallback mode.");
+      return [];
+    };
   }
 
-  _client = createClient(url, key, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-      detectSessionInUrl: false,
-    },
-  });
-
-  return _client;
+  return neon(connectionString);
 }
