@@ -17,8 +17,11 @@ const MOCK_CONFIG: BusinessConfig = {
   id: "mock-config-id-001",
   business_id: "mock-business-id-001",
   nombre_bot: "Copilot Técnico Abastible",
+  bot_name: "Copilot Técnico Abastible",
   tono: "técnico y preciso",
+  tone: "técnico y preciso",
   horario: "Lunes a Viernes 8am-7pm",
+  knowledge_base_path: null,
   supervisor_phone: "+56900000001",
   servicios: [],
   faqs: [],
@@ -29,7 +32,7 @@ const MOCK_CONFIG: BusinessConfig = {
 export async function getBusinessByPhoneNumberId(phoneNumberId: string): Promise<Business | null> {
   try {
     const sql = getNeonSql();
-    const rows = await sql(`SELECT * FROM businesses WHERE wa_phone_number_id = $1 LIMIT 1`, [phoneNumberId]) as any[];
+    const rows = (await (sql as any)("SELECT * FROM businesses WHERE wa_phone_number_id = $1 LIMIT 1", [phoneNumberId])) as any[];
     if (rows && rows.length > 0) return rows[0] as Business;
   } catch (err) {
     console.warn("[Neon DB] Using mock business fallback");
@@ -40,7 +43,7 @@ export async function getBusinessByPhoneNumberId(phoneNumberId: string): Promise
 export async function getBusinessConfig(businessId: string): Promise<BusinessConfig | null> {
   try {
     const sql = getNeonSql();
-    const rows = await sql(`SELECT * FROM business_configs WHERE business_id = $1 LIMIT 1`, [businessId]) as any[];
+    const rows = (await (sql as any)("SELECT * FROM business_configs WHERE business_id = $1 LIMIT 1", [businessId])) as any[];
     if (rows && rows.length > 0) return rows[0] as BusinessConfig;
   } catch (err) {
     console.warn("[Neon DB] Using mock config fallback");
