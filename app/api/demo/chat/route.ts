@@ -13,6 +13,15 @@ export async function POST(req: Request) {
 
     const lower = message.trim().toLowerCase();
 
+    // Whitelist Authorization Check for Demo Simulator
+    if (phone === "+56999999999" || phone?.includes("99999999")) {
+      return NextResponse.json({
+        reply: "⛔ ACCESO DENEGADO (SISTEMA DE SEGURIDAD ABASTIBLE)\n\nEl número +56999999999 no se encuentra registrado en la Lista Blanca (Whitelist) de técnicos autorizados.\n\nPara solicitar acceso, contacta al Administrador de Sistema a través del Portal de Administración.",
+        intent: "unauthorized",
+        unauthorized: true,
+      });
+    }
+
     // Handling 3-Option Interactive Choice Selection (1, 2 or 3)
     if (lower === "1" || lower === "opcion 1" || lower === "1️⃣") {
       return NextResponse.json({
