@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Send, Bot, UserCheck, FileText, RefreshCw, ShieldCheck, CheckCircle, AlertCircle, Lightbulb, Zap, HelpCircle } from "lucide-react";
+import { Send, Bot, UserCheck, FileText, RefreshCw, ShieldCheck, CheckCircle, AlertCircle, Lightbulb, Menu, X } from "lucide-react";
+import Link from "next/link";
 
 interface Message {
   id: string;
@@ -12,22 +13,14 @@ interface Message {
 }
 
 const MOCK_TECHNICIANS = [
-  { name: "Juan Pérez (Técnico HVAC)", phone: "+56912345678", role: "Técnico Registrado (Autorizado)" },
-  { name: "Carlos Muñoz (Técnico Climatización)", phone: "+56987654321", role: "Técnico Registrado (Autorizado)" },
+  { name: "Juan Pérez (Técnico HVAC)", phone: "+56912345678", role: "Técnico Registrado" },
+  { name: "Carlos Muñoz (Climatización)", phone: "+56987654321", role: "Técnico Registrado" },
   { name: "Pedro Soto (Supervisor)", phone: "+56900000001", role: "Supervisor" },
-  { name: "Usuario Desconocido", phone: "+56999999999", role: "Sin Autorización (No Whitelist)" },
-];
-
-const PRESET_QUERIES = [
-  "¿Qué significa el error E-01 y cómo se soluciona?",
-  "¿Cuáles son los pasos para la prueba de estanqueidad?",
-  "Completé la instalación en Av. Providencia 1234, equipo HVAC-200, sin fallas.",
-  "Tengo una fuga masiva de refrigerante R410A y no puedo contenerla, necesito ayuda urgente.",
 ];
 
 const SUGGESTED_CHIPS = [
-  { label: "📍 Distancias SEC Cilindros 45kg", query: "¿Cuáles son las distancias mínimas de seguridad para un cilindro de 45 kg según la SEC?" },
-  { label: "⛽ Límite Llenado Estanque Granel", query: "¿Cuál es el porcentaje máximo de llenado permitido para un estanque de GLP a granel?" },
+  { label: "📍 Distancias SEC 45kg", query: "¿Cuáles son las distancias mínimas de seguridad para un cilindro de 45 kg según la SEC?" },
+  { label: "⛽ Límite Estanque Granel", query: "¿Cuál es el porcentaje máximo de llenado permitido para un estanque de GLP a granel?" },
   { label: "📋 Formulario TC11 SEC", query: "¿Cuándo se requiere la declaración con Formulario TC11?" },
   { label: "🛠️ Error E-VRP-01 Fuga Válvula", query: "¿Cómo solucionar el error E-VRP-01 de escape continuo en la válvula de seguridad?" },
 ];
@@ -38,12 +31,13 @@ export default function DemoSimulatorPage() {
     {
       id: "init",
       sender: "system",
-      text: "Sistema de Asistencia Técnica Abastible / Browns Studio inicializado. Selecciona un técnico, usa las sugerencias rápidas o escribe directamente.",
+      text: "Asistente Técnico Abastible listo. Selecciona una pregunta rápida o escribe tu consulta.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showConfigMobile, setShowConfigMobile] = useState(false);
 
   const handleSendMessage = async (textToSend?: string) => {
     const query = textToSend !== undefined ? textToSend : inputText;
@@ -99,154 +93,126 @@ export default function DemoSimulatorPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#F8FAFC", color: "#0F172A", fontFamily: "Segoe UI, -apple-system, sans-serif", padding: "24px" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#F8FAFC", color: "#0F172A", fontFamily: "Segoe UI, -apple-system, sans-serif", padding: "12px" }}>
       <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
         
-        {/* Header Estilo Microsoft 365 / Abastible */}
-        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", background: "#FFFFFF", padding: "20px 28px", borderRadius: "14px", boxShadow: "0 4px 20px rgba(0, 51, 102, 0.06)", borderLeft: "6px solid #FF6600" }}>
+        {/* Header Estilo Microsoft / Abastible Adaptado a Mobile */}
+        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", background: "#FFFFFF", padding: "14px 16px", borderRadius: "12px", boxShadow: "0 2px 10px rgba(0, 51, 102, 0.05)", borderLeft: "5px solid #FF6600" }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#003366", background: "rgba(0, 51, 102, 0.08)", padding: "4px 8px", borderRadius: "6px", fontWeight: "bold" }}>
-                MICROSOFT FLUENT + ABASTIBLE STYLE
-              </span>
-            </div>
-            <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#003366", margin: "6px 0 0 0" }}>
-              Centro de Validación de Procesos Técnicos en Terreno
+            <span style={{ fontSize: "10px", fontFamily: "monospace", color: "#003366", background: "rgba(0, 51, 102, 0.08)", padding: "2px 6px", borderRadius: "4px", fontWeight: "bold" }}>
+              DEMO TECNICA ABASTIBLE
+            </span>
+            <h1 style={{ fontSize: "16px", fontWeight: "700", color: "#003366", margin: "4px 0 0 0" }}>
+              Centro de Validación en Terreno
             </h1>
           </div>
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            <span style={{ fontSize: "13px", background: "#ECFDF5", color: "#059669", border: "1px solid #A7F3D0", padding: "6px 14px", borderRadius: "20px", fontWeight: "600", display: "flex", alignItems: "center", gap: "6px" }}>
-              <CheckCircle size={14} /> Servidor Local Activo
-            </span>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <Link href="/admin" style={{ background: "#003366", color: "#FFF", padding: "6px 12px", borderRadius: "6px", fontSize: "11px", textDecoration: "none", fontWeight: "700" }}>
+              Portal Admin
+            </Link>
+            <button
+              type="button"
+              onClick={() => setShowConfigMobile(!showConfigMobile)}
+              style={{ background: "#F1F5F9", border: "1px solid #CBD5E1", padding: "6px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "700", display: "flex", alignItems: "center", gap: "4px" }}
+            >
+              {showConfigMobile ? <X size={14} /> : <Menu size={14} />} Config
+            </button>
           </div>
         </header>
 
-        {/* Main Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "360px 1fr", gap: "24px" }}>
+        {/* Dynamic Responsive Layout */}
+        <div className="demo-responsive-grid" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           
-          {/* Left Panel: Sidebar Config */}
-          <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "14px", padding: "20px", boxShadow: "0 4px 16px rgba(0,0,0,0.03)" }}>
-            
-            <h3 style={{ fontSize: "14px", fontWeight: "700", color: "#003366", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
-              <UserCheck size={16} color="#FF6600" /> Whitelist de Técnicos
-            </h3>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "24px" }}>
-              {MOCK_TECHNICIANS.map((tech) => {
-                const isSelected = selectedTech.phone === tech.phone;
-                const isDenied = tech.role.includes("Sin");
-                return (
-                  <button
-                    key={tech.phone}
-                    type="button"
-                    onClick={() => setSelectedTech(tech)}
-                    style={{
-                      textAlign: "left",
-                      padding: "12px 14px",
-                      borderRadius: "10px",
-                      border: isSelected ? "2px solid #FF6600" : "1px solid #E2E8F0",
-                      background: isSelected ? "#FFF7ED" : "#F8FAFC",
-                      color: "#0F172A",
-                      cursor: "pointer",
-                      transition: "all 0.2s"
-                    }}
-                  >
-                    <div style={{ fontWeight: "700", fontSize: "13px", color: isSelected ? "#003366" : "#1E293B" }}>{tech.name}</div>
-                    <div style={{ fontSize: "11px", color: "#64748B", fontFamily: "monospace", marginTop: "2px" }}>{tech.phone}</div>
-                    <div style={{ fontSize: "11px", fontWeight: "600", color: isDenied ? "#DC2626" : "#059669", marginTop: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
-                      {isDenied ? <AlertCircle size={12} /> : <ShieldCheck size={12} />} {tech.role}
-                    </div>
-                  </button>
-                );
-              })}
+          {/* Mobile Config Drawer / Toggle */}
+          {showConfigMobile && (
+            <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "12px", padding: "14px", marginBottom: "8px" }}>
+              <h3 style={{ fontSize: "13px", fontWeight: "700", color: "#003366", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <UserCheck size={15} color="#FF6600" /> Seleccionar Técnico Simulado
+              </h3>
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                {MOCK_TECHNICIANS.map((tech) => {
+                  const isSelected = selectedTech.phone === tech.phone;
+                  return (
+                    <button
+                      key={tech.phone}
+                      type="button"
+                      onClick={() => {
+                        setSelectedTech(tech);
+                        setShowConfigMobile(false);
+                      }}
+                      style={{
+                        padding: "8px 12px",
+                        borderRadius: "8px",
+                        border: isSelected ? "2px solid #FF6600" : "1px solid #CBD5E1",
+                        background: isSelected ? "#FFF7ED" : "#F8FAFC",
+                        color: "#0F172A",
+                        fontSize: "11.5px",
+                        fontWeight: "600"
+                      }}
+                    >
+                      {tech.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
+          )}
 
-            <h3 style={{ fontSize: "14px", fontWeight: "700", color: "#003366", marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
-              <FileText size={16} color="#FF6600" /> Consultas Rápidas de Prueba
-            </h3>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              {PRESET_QUERIES.map((preset, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => handleSendMessage(preset)}
-                  disabled={loading}
-                  style={{
-                    textAlign: "left",
-                    padding: "10px 12px",
-                    borderRadius: "8px",
-                    background: "#F1F5F9",
-                    border: "1px solid #CBD5E1",
-                    color: "#334155",
-                    fontSize: "12px",
-                    cursor: "pointer",
-                    lineHeight: "1.4",
-                    fontWeight: "500"
-                  }}
-                >
-                  "{preset}"
-                </button>
-              ))}
-            </div>
-
-          </div>
-
-          {/* Right Panel: Chat Window */}
-          <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "14px", display: "flex", flexDirection: "column", height: "660px", boxShadow: "0 4px 16px rgba(0,0,0,0.03)" }}>
+          {/* Main Chat Box Mobile-First Design */}
+          <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "14px", display: "flex", flexDirection: "column", height: "calc(100vh - 120px)", minHeight: "500px", boxShadow: "0 2px 12px rgba(0,0,0,0.03)" }}>
             
-            {/* Chat Header */}
-            <div style={{ padding: "16px 20px", borderBottom: "1px solid #E2E8F0", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#003366", borderTopLeftRadius: "13px", borderTopRightRadius: "13px", color: "#FFFFFF" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ width: "38px", height: "38px", borderRadius: "8px", background: "#FF6600", display: "flex", alignItems: "center", justifyContent: "center", color: "#FFF" }}>
-                  <Bot size={22} />
+            {/* Chat Top Header */}
+            <div style={{ padding: "12px 16px", borderBottom: "1px solid #E2E8F0", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#003366", borderTopLeftRadius: "13px", borderTopRightRadius: "13px", color: "#FFFFFF" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "#FF6600", display: "flex", alignItems: "center", justifyContent: "center", color: "#FFF" }}>
+                  <Bot size={18} />
                 </div>
                 <div>
-                  <div style={{ fontWeight: "700", fontSize: "15px" }}>Copilot Técnico Abastible</div>
-                  <div style={{ fontSize: "12px", color: "#93C5FD" }}>
-                    Técnico activo: <strong style={{ color: "#FFF" }}>{selectedTech.name}</strong>
+                  <div style={{ fontWeight: "700", fontSize: "14px" }}>Copilot Técnico Abastible</div>
+                  <div style={{ fontSize: "11px", color: "#93C5FD" }}>
+                    Técnico: <strong style={{ color: "#FFF" }}>{selectedTech.name}</strong>
                   </div>
                 </div>
               </div>
-              <span style={{ fontSize: "11px", background: selectedTech.role.includes("Sin") ? "#FEE2E2" : "#D1FAE5", color: selectedTech.role.includes("Sin") ? "#991B1B" : "#065F46", padding: "4px 10px", borderRadius: "12px", fontWeight: "700" }}>
-                {selectedTech.role.includes("Sin") ? "⛔ NO AUTORIZADO" : "✓ ACCESO CONCEDIDO"}
+              <span style={{ fontSize: "10px", background: "#D1FAE5", color: "#065F46", padding: "3px 8px", borderRadius: "10px", fontWeight: "700" }}>
+                ✓ ACTIVO
               </span>
             </div>
 
-            {/* Chat Messages */}
-            <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: "16px", background: "#F8FAFC" }}>
+            {/* Scrollable Messages Area */}
+            <div style={{ flex: 1, overflowY: "auto", padding: "14px", display: "flex", flexDirection: "column", gap: "12px", background: "#F8FAFC" }}>
               {messages.map((msg) => (
                 <div
                   key={msg.id}
                   style={{
                     alignSelf: msg.sender === "user" ? "flex-end" : msg.sender === "bot" ? "flex-start" : "center",
-                    maxWidth: msg.sender === "system" ? "100%" : "78%",
+                    maxWidth: msg.sender === "system" ? "100%" : "88%",
                   }}
                 >
                   {msg.sender === "system" ? (
-                    <div style={{ background: "#E2E8F0", padding: "8px 18px", borderRadius: "20px", fontSize: "12px", color: "#475569", textAlign: "center", border: "1px solid #CBD5E1", fontWeight: "500" }}>
+                    <div style={{ background: "#E2E8F0", padding: "6px 14px", borderRadius: "16px", fontSize: "11px", color: "#475569", textAlign: "center", border: "1px solid #CBD5E1" }}>
                       {msg.text}
                     </div>
                   ) : (
                     <div
                       style={{
-                        padding: "14px 18px",
+                        padding: "12px 14px",
                         borderRadius: "12px",
                         background: msg.sender === "user" ? "#003366" : "#FFFFFF",
                         color: msg.sender === "user" ? "#FFFFFF" : "#0F172A",
                         border: msg.sender === "bot" ? "1px solid #E2E8F0" : "none",
-                        boxShadow: msg.sender === "bot" ? "0 2px 8px rgba(0,0,0,0.04)" : "none",
-                        lineHeight: "1.6",
+                        boxShadow: msg.sender === "bot" ? "0 2px 6px rgba(0,0,0,0.03)" : "none",
+                        lineHeight: "1.5",
                         whiteSpace: "pre-wrap",
-                        fontSize: "13.5px"
+                        fontSize: "13px"
                       }}
                     >
                       {msg.text}
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "8px", fontSize: "10px", opacity: 0.85 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px", fontSize: "9.5px", opacity: 0.8 }}>
                         <span>{msg.timestamp}</span>
                         {msg.intent && (
-                          <span style={{ background: "#FF6600", color: "#FFF", padding: "2px 6px", borderRadius: "4px", fontWeight: "700" }}>
-                            INTENT: {msg.intent.toUpperCase()}
+                          <span style={{ background: "#FF6600", color: "#FFF", padding: "1px 5px", borderRadius: "3px", fontWeight: "700" }}>
+                            {msg.intent.toUpperCase()}
                           </span>
                         )}
                       </div>
@@ -255,18 +221,15 @@ export default function DemoSimulatorPage() {
                 </div>
               ))}
               {loading && (
-                <div style={{ alignSelf: "flex-start", padding: "12px 18px", background: "#FFFFFF", borderRadius: "12px", color: "#003366", fontSize: "13px", border: "1px solid #E2E8F0", display: "flex", alignItems: "center", gap: "8px", fontWeight: "600" }}>
-                  <RefreshCw size={16} className="animate-spin" color="#FF6600" /> Consultando manuales técnicos Abastible...
+                <div style={{ alignSelf: "flex-start", padding: "10px 14px", background: "#FFFFFF", borderRadius: "10px", color: "#003366", fontSize: "12px", border: "1px solid #E2E8F0", display: "flex", alignItems: "center", gap: "6px", fontWeight: "600" }}>
+                  <RefreshCw size={14} className="animate-spin" color="#FF6600" /> Buscando fallas en manuales Abastible...
                 </div>
               )}
             </div>
 
-            {/* Suggested Chips Bar */}
-            <div style={{ padding: "10px 20px 4px 20px", background: "#FFFFFF", borderTop: "1px solid #F1F5F9" }}>
-              <div style={{ fontSize: "11px", fontWeight: "700", color: "#64748B", marginBottom: "8px", display: "flex", alignItems: "center", gap: "4px" }}>
-                <Lightbulb size={13} color="#FF6600" /> Recomendaciones sugeridas para el técnico:
-              </div>
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            {/* Quick Chips Bar (Mobile Optimized Horizontal Scroll) */}
+            <div style={{ padding: "8px 12px", background: "#FFFFFF", borderTop: "1px solid #F1F5F9" }}>
+              <div style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "4px" }}>
                 {SUGGESTED_CHIPS.map((chip, idx) => (
                   <button
                     key={idx}
@@ -277,13 +240,13 @@ export default function DemoSimulatorPage() {
                       background: "#EFF6FF",
                       border: "1px solid #BFDBFE",
                       color: "#1E40AF",
-                      padding: "6px 12px",
-                      borderRadius: "16px",
-                      fontSize: "11.5px",
+                      padding: "5px 10px",
+                      borderRadius: "14px",
+                      fontSize: "11px",
                       fontWeight: "600",
+                      whiteSpace: "nowrap",
                       cursor: "pointer",
-                      transition: "all 0.2s",
-                      boxShadow: "0 1px 2px rgba(0,0,0,0.03)"
+                      flexShrink: 0
                     }}
                   >
                     {chip.label}
@@ -292,37 +255,29 @@ export default function DemoSimulatorPage() {
               </div>
             </div>
 
-            {/* Input Bar Form */}
+            {/* Bottom Fixed Input Form */}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSendMessage();
               }}
-              style={{ padding: "12px 20px 16px 20px", background: "#FFFFFF", display: "flex", gap: "12px", borderBottomLeftRadius: "13px", borderBottomRightRadius: "13px" }}
+              style={{ padding: "10px 12px 12px 12px", background: "#FFFFFF", display: "flex", gap: "8px", borderBottomLeftRadius: "13px", borderBottomRightRadius: "13px" }}
             >
-              <textarea
-                rows={1}
-                placeholder="Escribe o pega una duda técnica o registro de incidencia..."
+              <input
+                type="text"
+                placeholder="Escribe tu consulta o responde 1, 2 o 3..."
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }
-                }}
                 disabled={loading}
                 style={{
                   flex: 1,
                   background: "#F8FAFC",
                   border: "1px solid #CBD5E1",
                   borderRadius: "8px",
-                  padding: "12px 16px",
+                  padding: "10px 12px",
                   color: "#0F172A",
-                  fontSize: "14px",
-                  outline: "none",
-                  resize: "none",
-                  fontFamily: "inherit"
+                  fontSize: "13.5px",
+                  outline: "none"
                 }}
               />
               <button
@@ -332,17 +287,16 @@ export default function DemoSimulatorPage() {
                   background: "#FF6600",
                   border: "none",
                   borderRadius: "8px",
-                  padding: "0 24px",
+                  padding: "0 16px",
                   color: "#FFFFFF",
                   fontWeight: "700",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  gap: "8px",
-                  fontSize: "14px"
+                  justifyContent: "center"
                 }}
               >
-                <Send size={16} /> Enviar
+                <Send size={16} />
               </button>
             </form>
 
