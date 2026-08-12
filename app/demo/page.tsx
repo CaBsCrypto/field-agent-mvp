@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Send, Bot, UserCheck, FileText, RefreshCw, ShieldCheck, CheckCircle, AlertCircle } from "lucide-react";
+import { Send, Bot, UserCheck, FileText, RefreshCw, ShieldCheck, CheckCircle, AlertCircle, Lightbulb, Zap, HelpCircle } from "lucide-react";
 
 interface Message {
   id: string;
@@ -25,13 +25,20 @@ const PRESET_QUERIES = [
   "Tengo una fuga masiva de refrigerante R410A y no puedo contenerla, necesito ayuda urgente.",
 ];
 
+const SUGGESTED_CHIPS = [
+  { label: "📍 Distancias SEC Cilindros 45kg", query: "¿Cuáles son las distancias mínimas de seguridad para un cilindro de 45 kg según la SEC?" },
+  { label: "⛽ Límite Llenado Estanque Granel", query: "¿Cuál es el porcentaje máximo de llenado permitido para un estanque de GLP a granel?" },
+  { label: "📋 Formulario TC11 SEC", query: "¿Cuándo se requiere la declaración con Formulario TC11?" },
+  { label: "🛠️ Error E-VRP-01 Fuga Válvula", query: "¿Cómo solucionar el error E-VRP-01 de escape continuo en la válvula de seguridad?" },
+];
+
 export default function DemoSimulatorPage() {
   const [selectedTech, setSelectedTech] = useState(MOCK_TECHNICIANS[0]);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "init",
       sender: "system",
-      text: "Sistema de Asistencia Técnica Abastible / Browns Studio inicializado. Selecciona un técnico o elige una consulta rápida.",
+      text: "Sistema de Asistencia Técnica Abastible / Browns Studio inicializado. Selecciona un técnico, usa las sugerencias rápidas o escribe directamente.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -254,13 +261,44 @@ export default function DemoSimulatorPage() {
               )}
             </div>
 
+            {/* Suggested Chips Bar */}
+            <div style={{ padding: "10px 20px 4px 20px", background: "#FFFFFF", borderTop: "1px solid #F1F5F9" }}>
+              <div style={{ fontSize: "11px", fontWeight: "700", color: "#64748B", marginBottom: "8px", display: "flex", alignItems: "center", gap: "4px" }}>
+                <Lightbulb size={13} color="#FF6600" /> Recomendaciones sugeridas para el técnico:
+              </div>
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                {SUGGESTED_CHIPS.map((chip, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleSendMessage(chip.query)}
+                    disabled={loading}
+                    style={{
+                      background: "#EFF6FF",
+                      border: "1px solid #BFDBFE",
+                      color: "#1E40AF",
+                      padding: "6px 12px",
+                      borderRadius: "16px",
+                      fontSize: "11.5px",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                      boxShadow: "0 1px 2px rgba(0,0,0,0.03)"
+                    }}
+                  >
+                    {chip.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Input Bar Form */}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSendMessage();
               }}
-              style={{ padding: "16px 20px", borderTop: "1px solid #E2E8F0", background: "#FFFFFF", display: "flex", gap: "12px", borderBottomLeftRadius: "13px", borderBottomRightRadius: "13px" }}
+              style={{ padding: "12px 20px 16px 20px", background: "#FFFFFF", display: "flex", gap: "12px", borderBottomLeftRadius: "13px", borderBottomRightRadius: "13px" }}
             >
               <textarea
                 rows={1}
