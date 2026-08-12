@@ -14,6 +14,7 @@ interface WhitelistTech {
 }
 
 const INITIAL_TECHNICIANS: WhitelistTech[] = [
+  { id: "0", name: "Administrador Real (MGC)", phone: "+56961857682", role: "Administrador de Sistema", status: "active", createdAt: "2026-08-12" },
   { id: "1", name: "Juan Pérez (Técnico HVAC)", phone: "+56912345678", role: "Técnico en Terreno", status: "active", createdAt: "2026-08-01" },
   { id: "2", name: "Carlos Muñoz (Técnico Climatización)", phone: "+56987654321", role: "Técnico en Terreno", status: "active", createdAt: "2026-08-05" },
   { id: "3", name: "Pedro Soto (Supervisor Central)", phone: "+56900000001", role: "Supervisor de Guardia", status: "active", createdAt: "2026-08-02" },

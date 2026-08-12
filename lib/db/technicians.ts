@@ -2,6 +2,7 @@
 import type { Technician } from "@/types";
 
 const MOCK_WHITELIST_TECHNICIANS: Array<{ name: string; wa_phone: string; role: string }> = [
+  { name: "Administrador Real (MGC)", wa_phone: "56961857682", role: "administrator" },
   { name: "Juan Pérez (Técnico HVAC)", wa_phone: "56912345678", role: "technician" },
   { name: "Carlos Muñoz (Técnico Climatización)", wa_phone: "56987654321", role: "technician" },
   { name: "Pedro Soto (Supervisor)", wa_phone: "56900000001", role: "supervisor" },
