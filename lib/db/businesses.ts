@@ -5,7 +5,7 @@ const MOCK_BUSINESS: Business = {
   id: "mock-business-id-001",
   nombre: "TechServ Chile S.A. (Abastible)",
   rubro: "Gas & Climatización",
-  wa_phone_number_id: "TEST_PHONE_ID_123",
+  wa_phone_number_id: process.env.KAPSO_CHANNEL_ID || "1121481194385373",
   wa_access_token: null,
   gemini_api_key: null,
   is_active: true,
