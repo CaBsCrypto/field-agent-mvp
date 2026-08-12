@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Send, Bot, UserCheck, FileText, RefreshCw, ShieldCheck, CheckCircle, AlertCircle, Lightbulb, Menu, X, Phone } from "lucide-react";
 import Link from "next/link";
 
@@ -86,6 +86,15 @@ export default function DemoSimulatorPage() {
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
   const [showConfigMobile, setShowConfigMobile] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
 
   const activeRoleConfig = ABASTIBLE_ROLES[selectedTech.roleKey] || ABASTIBLE_ROLES["tech_glp"];
 
@@ -313,6 +322,7 @@ export default function DemoSimulatorPage() {
                   <RefreshCw size={15} className="animate-spin" color="#FF6600" /> Buscando solución específica en la base de datos...
                 </div>
               )}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Suggested Chips (Dinámicos por Cargo del Técnico) */}
