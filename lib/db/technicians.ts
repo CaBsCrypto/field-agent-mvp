@@ -1,66 +1,60 @@
-import { getNeonSql } from "./client";
+// ── FieldAgentMVP — Technician Whitelist & Google Drive Mock Sync ──────────
 import type { Technician } from "@/types";
 
-const MOCK_TECHNICIANS: Technician[] = [
-  {
-    id: "tech-1",
-    business_id: "mock-business-id-001",
-    wa_phone: "+56912345678",
-    full_name: "Juan Pérez (Técnico HVAC)",
-    name: "Juan Pérez (Técnico HVAC)",
-    role: "technician",
-    is_active: true,
-    notes: "Técnico Certificado SEC",
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "tech-2",
-    business_id: "mock-business-id-001",
-    wa_phone: "+56987654321",
-    full_name: "Carlos Muñoz (Técnico Climatización)",
-    name: "Carlos Muñoz (Técnico Climatización)",
-    role: "technician",
-    is_active: true,
-    notes: "Técnico Certificado SEC",
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "tech-3",
-    business_id: "mock-business-id-001",
-    wa_phone: "+56900000001",
-    full_name: "Pedro Soto (Supervisor)",
-    name: "Pedro Soto (Supervisor)",
-    role: "supervisor",
-    is_active: true,
-    notes: "Supervisor Abastible",
-    created_at: new Date().toISOString(),
-  },
+const MOCK_WHITELIST_TECHNICIANS: Array<{ name: string; wa_phone: string; role: string }> = [
+  { name: "Juan Pérez (Técnico HVAC)", wa_phone: "56912345678", role: "technician" },
+  { name: "Carlos Muñoz (Técnico Climatización)", wa_phone: "56987654321", role: "technician" },
+  { name: "Pedro Soto (Supervisor)", wa_phone: "56900000001", role: "supervisor" },
 ];
 
-export async function getTechnicianByPhone(phone: string, businessId: string): Promise<Technician | null> {
-  try {
-    const sql = getNeonSql();
-    const rows = (await (sql as any)("SELECT * FROM technicians WHERE wa_phone = $1 AND is_active = true LIMIT 1", [phone])) as any[];
-
-    if (rows && rows.length > 0) {
-      return rows[0] as Technician;
-    }
-  } catch (err) {
-    console.warn("[Neon DB] Falling back to memory whitelist for phone:", phone);
+export async function getTechnicianByPhone(phone: string, businessId?: string): Promise<Technician | null> {
+  const cleanPhone = phone.replace(/\D/g, "");
+  
+  // 1. Check in-memory Whitelist simulation (Accepts test phones + predefined)
+  const found = MOCK_WHITELIST_TECHNICIANS.find(t => t.wa_phone === cleanPhone || cleanPhone.endsWith(t.wa_phone!));
+  if (found) {
+    return {
+      id: "tech_" + cleanPhone,
+      business_id: businessId || "biz_abastible",
+      name: found.name,
+      full_name: found.name,
+      wa_phone: cleanPhone,
+      role: found.role as any || "technician",
+      is_active: true,
+      created_at: new Date().toISOString(),
+    };
   }
 
-  // Fallback for demo/mock testing
-  const found = MOCK_TECHNICIANS.find((t) => t.wa_phone === phone);
-  return found || null;
+  // 2. Allow any tester phone passed via env or fallback for live demo testing
+  if (process.env.ALLOW_ALL_TEST_PHONES === "true") {
+    return {
+      id: "tech_test_" + cleanPhone,
+      business_id: businessId || "biz_abastible",
+      name: `Técnico Autorizado (+${cleanPhone})`,
+      full_name: `Técnico Autorizado (+${cleanPhone})`,
+      wa_phone: cleanPhone,
+      role: "technician",
+      is_active: true,
+      created_at: new Date().toISOString(),
+    };
+  }
+
+  return null;
 }
 
-export async function listTechnicians(businessId: string): Promise<Technician[]> {
-  try {
-    const sql = getNeonSql();
-    const rows = (await (sql as any)("SELECT * FROM technicians WHERE business_id = $1", [businessId])) as any[];
-    if (rows && rows.length > 0) return rows as Technician[];
-  } catch (err) {
-    console.warn("[Neon DB] Using mock technician list");
-  }
-  return MOCK_TECHNICIANS;
+export async function addTechnicianToWhitelist(name: string, phone: string, role: string = "technician"): Promise<Technician> {
+  const cleanPhone = phone.replace(/\D/g, "");
+  const newTech = { name, wa_phone: cleanPhone, role };
+  MOCK_WHITELIST_TECHNICIANS.push(newTech);
+
+  return {
+    id: "tech_" + cleanPhone,
+    business_id: "biz_abastible",
+    name,
+    full_name: name,
+    wa_phone: cleanPhone,
+    role: role as any,
+    is_active: true,
+    created_at: new Date().toISOString(),
+  };
 }
