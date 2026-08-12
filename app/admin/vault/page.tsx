@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Network, Share2, BookOpen, Search, ArrowRight, Layers, FileText, CheckCircle2, RefreshCw, Cpu } from "lucide-react";
+import { useState } from "react";
+import { AdminHeader } from "@/components/AdminHeader";
+import { Network, Share2, BookOpen, Search, Layers } from "lucide-react";
 
 interface VaultNode {
   id: string;
@@ -73,27 +74,8 @@ export default function AdminVaultPage() {
     <div style={{ minHeight: "100vh", backgroundColor: "#F8FAFC", color: "#0F172A", fontFamily: "Segoe UI, -apple-system, sans-serif", padding: "24px" }}>
       <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
         
-        {/* Header Admin Bóveda */}
-        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", background: "#003366", padding: "20px 28px", borderRadius: "14px", color: "#FFFFFF", boxShadow: "0 4px 20px rgba(0, 51, 102, 0.12)" }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#FFF", background: "#FF6600", padding: "4px 8px", borderRadius: "6px", fontWeight: "bold" }}>
-                GBRAIN / OBSIDIAN KNOWLEDGE GRAPH
-              </span>
-            </div>
-            <h1 style={{ fontSize: "22px", fontWeight: "700", margin: "6px 0 0 0" }}>
-              Bóveda Relacional de Conocimiento (Grafo de Notas)
-            </h1>
-          </div>
-          <div style={{ display: "flex", gap: "12px" }}>
-            <a
-              href="/admin/training"
-              style={{ fontSize: "13px", background: "rgba(255,255,255,0.15)", color: "#FFF", border: "1px solid rgba(255,255,255,0.3)", padding: "8px 16px", borderRadius: "8px", textDecoration: "none", fontWeight: "600", display: "flex", alignItems: "center", gap: "6px" }}
-            >
-              Volver a Administración <ArrowRight size={14} />
-            </a>
-          </div>
-        </header>
+        {/* Unified Admin Navigation Header */}
+        <AdminHeader />
 
         {/* Layout Grid */}
         <div style={{ display: "grid", gridTemplateColumns: "380px 1fr", gap: "24px" }}>
