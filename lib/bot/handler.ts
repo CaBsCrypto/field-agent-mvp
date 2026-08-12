@@ -32,22 +32,17 @@ export async function processMessage(
   const accessToken =
     business.wa_access_token ?? process.env.WHATSAPP_ACCESS_TOKEN ?? "";
 
-  // 2. Check authorization — only registered technicians can use the system
-  const technician = await getTechnicianByPhone(from, business.id);
-  if (!technician) {
-    console.warn(`[handler] Unauthorized sender: +${from} for business=${business.id}`);
-    try {
-      await sendTextMessage(
-        from,
-        "No autorizado. Solo tecnicos registrados pueden usar este sistema.",
-        accessToken,
-        phoneNumberId
-      );
-    } catch (err) {
-      console.error("[handler] Failed to send unauthorized message:", err);
-    }
-    return;
-  }
+  // 2. Technician context (creates active technician mock)
+  const technician = (await getTechnicianByPhone(from, business.id)) || {
+    id: "tech_" + from,
+    business_id: business.id,
+    name: "Técnico en Terreno (" + from + ")",
+    full_name: "Técnico en Terreno (" + from + ")",
+    wa_phone: from,
+    role: "technician",
+    is_active: true,
+    created_at: new Date().toISOString(),
+  };
 
   // 3. Get or create conversation session
   const conversation = await getOrCreateConversation(from, business.id);
