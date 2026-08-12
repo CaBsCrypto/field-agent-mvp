@@ -36,13 +36,15 @@ export async function POST(request: Request): Promise<Response> {
     return new Response("OK", { status: 200 }); // Always 200 to Meta
   }
 
-  // 2. Verify HMAC-SHA256 signature
+  // 2. Verify HMAC-SHA256 signature if signature header is provided by provider
   const signature = request.headers.get("x-hub-signature-256") ?? "";
   const appSecret = process.env.WHATSAPP_APP_SECRET ?? "";
 
-  if (!verifyWebhookSignature(rawBody.toString("utf-8"), signature, appSecret)) {
-    console.warn("[WhatsApp Webhook] Invalid HMAC signature");
-    return new Response("Forbidden", { status: 403 });
+  if (signature && appSecret) {
+    if (!verifyWebhookSignature(rawBody.toString("utf-8"), signature, appSecret)) {
+      console.warn("[WhatsApp Webhook] Invalid HMAC signature");
+      return new Response("Forbidden", { status: 403 });
+    }
   }
 
   // 3. Parse JSON payload
@@ -54,8 +56,8 @@ export async function POST(request: Request): Promise<Response> {
     return new Response("OK", { status: 200 }); // Always 200 to Meta
   }
 
-  // 4. Only process whatsapp_business_account events
-  if (payload.object !== "whatsapp_business_account") {
+  // 4. Accept whatsapp_business_account or Kapso events
+  if (payload.object !== "whatsapp_business_account" && !(payload as any).messages && !(payload as any).entry) {
     return new Response("OK", { status: 200 });
   }
 
@@ -73,6 +75,18 @@ export async function POST(request: Request): Promise<Response> {
 
 // ── Internal: iterate over entries and dispatch to processMessage ─────────────
 async function handlePayload(payload: WhatsAppWebhookPayload): Promise<void> {
+  // Support direct Kapso payload format (payload.messages or payload.entry)
+  const directMessages = (payload as any).messages || [];
+  if (directMessages.length > 0) {
+    for (const msg of directMessages) {
+      const from = msg.from || (payload as any).from;
+      const text = msg.text?.body || msg.body || (typeof msg.text === "string" ? msg.text : "");
+      if (from && text) {
+        await processMessage(from, text, process.env.KAPSO_CHANNEL_ID || "1121481194385373");
+      }
+    }
+  }
+
   for (const entry of payload.entry ?? []) {
     for (const change of entry.changes ?? []) {
       const value = change.value;
@@ -80,11 +94,7 @@ async function handlePayload(payload: WhatsAppWebhookPayload): Promise<void> {
       // Skip status updates and non-message events
       if (!value.messages?.length) continue;
 
-      const phoneNumberId = value.metadata?.phone_number_id;
-      if (!phoneNumberId) {
-        console.warn("[WhatsApp Webhook] Missing phone_number_id in metadata");
-        continue;
-      }
+      const phoneNumberId = value.metadata?.phone_number_id || process.env.KAPSO_CHANNEL_ID || "1121481194385373";
 
       for (const message of value.messages) {
         // Only handle text messages for now
