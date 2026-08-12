@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, BookOpen, Network, AlertTriangle, PhoneCall, ExternalLink, Bot } from "lucide-react";
+import { LayoutDashboard, BookOpen, Network, AlertTriangle, PhoneCall, ExternalLink, Bot, ShieldCheck } from "lucide-react";
 
 export function AdminHeader() {
   const pathname = usePathname();
 
   const navItems = [
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { label: "Control de Accesos (Whitelist)", href: "/admin/whitelist", icon: ShieldCheck },
     { label: "Manuales & Base de Datos", href: "/admin/training", icon: BookOpen },
     { label: "Monitoreo Incidencias", href: "/admin/incidents", icon: AlertTriangle },
   ];
