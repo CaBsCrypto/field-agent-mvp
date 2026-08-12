@@ -9,9 +9,7 @@ export function AdminHeader() {
 
   const navItems = [
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { label: "Manuales & Entrenamiento", href: "/admin/training", icon: BookOpen },
-    { label: "Obsidian Studio Integrado", href: "/admin/obsidian", icon: BookOpen },
-    { label: "Bóveda Obsidian Graph", href: "/admin/vault", icon: Network },
+    { label: "Manuales & Base de Datos", href: "/admin/training", icon: BookOpen },
     { label: "Monitoreo Incidencias", href: "/admin/incidents", icon: AlertTriangle },
   ];
 
