@@ -1,70 +1,200 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AdminHeader } from "@/components/AdminHeader";
-import { Network, Share2, BookOpen, Search, Layers } from "lucide-react";
+import { Network, Share2, BookOpen, Search, Layers, RefreshCw, ZoomIn, ZoomOut } from "lucide-react";
 
-interface VaultNode {
+interface GraphNode {
   id: string;
   title: string;
-  fileName: string;
   category: string;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
   links: string[];
   backlinks: string[];
   summary: string;
 }
 
-export default function AdminVaultPage() {
-  const [nodes, setNodes] = useState<VaultNode[]>([
-    {
-      id: "05-normativa-sec-glp-cilindros",
-      title: "Protocolo Técnico SEC Chile: Cilindros GLP (DS 108 / DS 66)",
-      fileName: "05-normativa-sec-glp-cilindros.md",
-      category: "SEC Chile / Normativa",
-      links: ["06-protocolo-estanques-glp-abastible", "04-protocolo-escalacion"],
-      backlinks: ["06-protocolo-estanques-glp-abastible"],
-      summary: "Reglamento de seguridad para cilindros de GLP 15kg/45kg, distancias de seguridad y formulario TC11...",
-    },
-    {
-      id: "06-protocolo-estanques-glp-abastible",
-      title: "Protocolo Mantenimiento Estanques a Granel Abastible",
-      fileName: "06-protocolo-estanques-glp-abastible.md",
-      category: "Abastible Granel",
-      links: ["05-normativa-sec-glp-cilindros", "01-codigos-error-hvac"],
-      backlinks: ["05-normativa-sec-glp-cilindros"],
-      summary: "Llenado máximo del 85%, inspección quinquenal NCh2427 y matriz de fallas E-VRP-01...",
-    },
-    {
-      id: "01-codigos-error-hvac",
-      title: "Tabla Maestra de Códigos de Error HVAC & Climatización",
-      fileName: "01-codigos-error-hvac.md",
-      category: "Códigos de Falla",
-      links: ["02-protocolo-mantenimiento-preventivo"],
-      backlinks: ["06-protocolo-estanques-glp-abastible"],
-      summary: "Códigos E-01 a E-20, causas probables, soluciones paso a paso y criterios de escalación...",
-    },
-    {
-      id: "02-protocolo-mantenimiento-preventivo",
-      title: "Protocolo de Mantenimiento Preventivo Mensual / Anual",
-      fileName: "02-protocolo-mantenimiento-preventivo.md",
-      category: "Procedimientos Generales",
-      links: ["04-protocolo-escalacion"],
-      backlinks: ["01-codigos-error-hvac"],
-      summary: "Checklist de inspección de 15 puntos, calibración de termostatos y estanqueidad...",
-    },
-    {
-      id: "04-protocolo-escalacion",
-      title: "Protocolo de Escalación Inmediata a Supervisor Abastible",
-      fileName: "04-protocolo-escalacion.md",
-      category: "Procedimientos Generales",
-      links: [],
-      backlinks: ["05-normativa-sec-glp-cilindros", "02-protocolo-mantenimiento-preventivo"],
-      summary: "Protocolo de emergencias Clase 1, fugas no contenidas y alertas por WhatsApp al supervisor...",
-    },
-  ]);
+const INITIAL_NODES: GraphNode[] = [
+  {
+    id: "05-normativa-sec-glp-cilindros",
+    title: "Normativa SEC Chile GLP (DS 108 / DS 66)",
+    category: "SEC Chile / Normativa",
+    x: 200,
+    y: 150,
+    vx: 0,
+    vy: 0,
+    links: ["06-protocolo-estanques-glp-abastible", "04-protocolo-escalacion"],
+    backlinks: ["06-protocolo-estanques-glp-abastible"],
+    summary: "Reglamento de seguridad para cilindros de GLP 15kg/45kg, distancias de seguridad y formulario TC11...",
+  },
+  {
+    id: "06-protocolo-estanques-glp-abastible",
+    title: "Estanques a Granel Abastible",
+    category: "Abastible Granel",
+    x: 450,
+    y: 120,
+    vx: 0,
+    vy: 0,
+    links: ["05-normativa-sec-glp-cilindros", "01-codigos-error-hvac"],
+    backlinks: ["05-normativa-sec-glp-cilindros"],
+    summary: "Llenado máximo del 85%, inspección quinquenal NCh2427 y matriz de fallas E-VRP-01...",
+  },
+  {
+    id: "01-codigos-error-hvac",
+    title: "Códigos de Error HVAC & Climatización",
+    category: "Códigos de Falla",
+    x: 650,
+    y: 260,
+    vx: 0,
+    vy: 0,
+    links: ["02-protocolo-mantenimiento-preventivo"],
+    backlinks: ["06-protocolo-estanques-glp-abastible"],
+    summary: "Códigos E-01 a E-20, causas probables, soluciones paso a paso y criterios de escalación...",
+  },
+  {
+    id: "02-protocolo-mantenimiento-preventivo",
+    title: "Mantenimiento Preventivo Mensual",
+    category: "Procedimientos",
+    x: 350,
+    y: 320,
+    vx: 0,
+    vy: 0,
+    links: ["04-protocolo-escalacion"],
+    backlinks: ["01-codigos-error-hvac"],
+    summary: "Checklist de inspección de 15 puntos, calibración de termostatos y estanqueidad...",
+  },
+  {
+    id: "04-protocolo-escalacion",
+    title: "Escalación Inmediata a Supervisor",
+    category: "Procedimientos",
+    x: 150,
+    y: 300,
+    vx: 0,
+    vy: 0,
+    links: [],
+    backlinks: ["05-normativa-sec-glp-cilindros", "02-protocolo-mantenimiento-preventivo"],
+    summary: "Protocolo de emergencias Clase 1, fugas no contenidas y alertas por WhatsApp al supervisor...",
+  },
+];
 
-  const [selectedNode, setSelectedNode] = useState<VaultNode>(nodes[0]);
+export default function AdminVaultPage() {
+  const [nodes, setNodes] = useState<GraphNode[]>(INITIAL_NODES);
+  const [selectedNode, setSelectedNode] = useState<GraphNode>(INITIAL_NODES[0]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // Simple 2D Canvas Force-Directed physics simulation for Obsidian Graph View
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+
+    const render = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Background grid dots like Obsidian
+      ctx.fillStyle = "#0A2540";
+      for (let x = 0; x < canvas.width; x += 30) {
+        for (let y = 0; y < canvas.height; y += 30) {
+          ctx.fillRect(x, y, 1.5, 1.5);
+        }
+      }
+
+      // Draw Connection Lines (Edges)
+      nodes.forEach((sourceNode) => {
+        sourceNode.links.forEach((targetId) => {
+          const targetNode = nodes.find((n) => n.id === targetId);
+          if (targetNode) {
+            ctx.beginPath();
+            ctx.moveTo(sourceNode.x, sourceNode.y);
+            ctx.lineTo(targetNode.x, targetNode.y);
+            ctx.strokeStyle = sourceNode.id === selectedNode.id || targetNode.id === selectedNode.id ? "#FF6600" : "rgba(0, 240, 255, 0.25)";
+            ctx.lineWidth = sourceNode.id === selectedNode.id || targetNode.id === selectedNode.id ? 2.5 : 1;
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+        });
+      });
+
+      // Draw Nodes (Floating Circles & Labels)
+      nodes.forEach((node) => {
+        const isSelected = node.id === selectedNode.id;
+        const radius = isSelected ? 12 : 8;
+
+        // Node Glow Effect
+        if (isSelected) {
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, radius + 8, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255, 102, 0, 0.25)";
+          ctx.fill();
+        }
+
+        // Node Circle
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = isSelected ? "#FF6600" : node.category.includes("SEC") ? "#00F0FF" : "#38BDF8";
+        ctx.fill();
+        ctx.strokeStyle = "#FFFFFF";
+        ctx.lineWidth = isSelected ? 3 : 1.5;
+        ctx.stroke();
+
+        // Label Text
+        ctx.font = isSelected ? "bold 12px Segoe UI, sans-serif" : "11px Segoe UI, sans-serif";
+        ctx.fillStyle = isSelected ? "#FFFFFF" : "#94A3B8";
+        ctx.fillText(node.title, node.x + radius + 8, node.y + 4);
+      });
+
+      animId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => cancelAnimationFrame(animId);
+  }, [nodes, selectedNode]);
+
+  // Dragging interaction
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+
+    const clickedNode = nodes.find((n) => {
+      const dist = Math.hypot(n.x - clickX, n.y - clickY);
+      return dist <= 16;
+    });
+
+    if (clickedNode) {
+      setSelectedNode(clickedNode);
+      setDraggingId(clickedNode.id);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!draggingId) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const moveX = e.clientX - rect.left;
+    const moveY = e.clientY - rect.top;
+
+    setNodes((prev) =>
+      prev.map((n) => (n.id === draggingId ? { ...n, x: moveX, y: moveY } : n))
+    );
+  };
+
+  const handleMouseUp = () => {
+    setDraggingId(null);
+  };
 
   const filteredNodes = nodes.filter(
     (n) => n.title.toLowerCase().includes(searchQuery.toLowerCase()) || n.category.toLowerCase().includes(searchQuery.toLowerCase())
@@ -74,7 +204,7 @@ export default function AdminVaultPage() {
     <div style={{ minHeight: "100vh", backgroundColor: "#F8FAFC", color: "#0F172A", fontFamily: "Segoe UI, -apple-system, sans-serif", padding: "24px" }}>
       <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
         
-        {/* Unified Admin Navigation Header */}
+        {/* Navigation Header */}
         <AdminHeader />
 
         {/* Layout Grid */}
@@ -131,49 +261,33 @@ export default function AdminVaultPage() {
 
           </div>
 
-          {/* Right Panel: Interactive Graph & Detail View */}
+          {/* Right Panel: Interactive Canvas Graph View */}
           <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
             
-            {/* Visual Graph View Map (Canvas representation) */}
-            <div style={{ background: "#001E3C", borderRadius: "14px", padding: "24px", color: "#FFFFFF", position: "relative", minHeight: "260px", display: "flex", flexDirection: "column", justifyContent: "space-between", border: "1px solid #003366", boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            {/* Real Interactive Canvas Graph View */}
+            <div style={{ background: "#001E3C", borderRadius: "14px", padding: "16px", color: "#FFFFFF", position: "relative", border: "1px solid #003366", boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                 <span style={{ fontSize: "12px", color: "#00F0FF", fontWeight: "700", display: "flex", alignItems: "center", gap: "6px" }}>
-                  <Network size={16} /> OBSIDIAN GRAPH VIEW (GBRAIN V2 ENGINE)
+                  <Network size={16} /> OBSIDIAN INTERACTIVE CANVAS GRAPH (GBRAIN ENGINE)
                 </span>
-                <span style={{ fontSize: "11px", background: "rgba(0, 240, 255, 0.15)", color: "#00F0FF", padding: "4px 10px", borderRadius: "12px" }}>
-                  5 NODOS Y 7 ENLACES RELACIONALES
+                <span style={{ fontSize: "11px", background: "rgba(0, 240, 255, 0.15)", color: "#00F0FF", padding: "4px 10px", borderRadius: "12px", fontWeight: "700" }}>
+                  💡 Arrastra los nodos con el mouse
                 </span>
               </div>
 
-              {/* Node Visual Graph Simulation */}
-              <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", margin: "30px 0" }}>
-                {nodes.map((n) => {
-                  const isActive = selectedNode.id === n.id;
-                  return (
-                    <div
-                      key={n.id}
-                      onClick={() => setSelectedNode(n)}
-                      style={{
-                        padding: "12px 16px",
-                        borderRadius: "20px",
-                        background: isActive ? "#FF6600" : "rgba(255,255,255,0.08)",
-                        border: isActive ? "2px solid #FFF" : "1px solid rgba(255,255,255,0.2)",
-                        color: "#FFF",
-                        fontSize: "12px",
-                        fontWeight: "700",
-                        cursor: "pointer",
-                        boxShadow: isActive ? "0 0 15px rgba(255, 102, 0, 0.5)" : "none",
-                        transition: "all 0.2s"
-                      }}
-                    >
-                      ● {n.id.split("-").slice(1, 3).join(" ").toUpperCase()}
-                    </div>
-                  );
-                })}
-              </div>
+              {/* 2D Canvas Element */}
+              <canvas
+                ref={canvasRef}
+                width={780}
+                height={360}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                style={{ width: "100%", height: "360px", background: "#001830", borderRadius: "10px", cursor: draggingId ? "grabbing" : "grab" }}
+              />
 
-              <div style={{ fontSize: "11px", color: "#94A3B8", textAlign: "center" }}>
-                Haz clic en cualquier nodo para inspeccionar sus conexiones relacionales bidireccionales ([[wikilinks]])
+              <div style={{ fontSize: "11px", color: "#94A3B8", textAlign: "center", marginTop: "10px" }}>
+                Haz clic en cualquier nodo para seleccionarlo o arrástralo para explorar sus conexiones bidireccionales (`[[wikilinks]]`).
               </div>
             </div>
 
@@ -188,7 +302,7 @@ export default function AdminVaultPage() {
                     {selectedNode.title}
                   </h2>
                   <div style={{ fontSize: "12px", color: "#64748B", marginTop: "2px", fontFamily: "monospace" }}>
-                    Archivo: {selectedNode.fileName}
+                    Archivo: {selectedNode.id}.md
                   </div>
                 </div>
               </div>
