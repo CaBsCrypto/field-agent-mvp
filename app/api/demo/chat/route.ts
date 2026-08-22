@@ -44,6 +44,20 @@ export async function POST(req: Request) {
     }
 
     // 3. Specific Query Matches (Specific Responses per Topic)
+    if (lower.includes("siraga") || lower.includes("hermeticidad") || lower.includes("presostato")) {
+      return NextResponse.json({
+        reply: `⚙️ **Protocolo de Hermeticidad PLC Báscula SIRAGA (Fuga C3):**\n\n1. **Navegación PLC:** Tecla **F3** ➔ **ENTER** ➔ Código **01024** ➔ **GENERAL** ➔ **PLC** ➔ **STEP BY STEP** ➔ Ajustar **SFC de 0 a 1**.\n2. **Verificación de Sensores:** Con la combinación **SHIFT + ESC**, desconectar el *tubing* de aire y bloquearlo con el dedo.\n3. **Diagnóstico:** El sensor debe cambiar su valor de **1 a 0** al taparlo y de **0 a 1** al soltarlo. Si no cambia, confirma que el **Presostato 27 está defectuoso**.`,
+        intent: "query",
+      });
+    }
+
+    if (lower.includes("secuencia") || lower.includes("incidente") || lower.includes("falla")) {
+      return NextResponse.json({
+        reply: `🚨 **Análisis de Secuencia de Fallas — Incidente Fuga C3:**\n\n- **Falla 1 (Sistema Hermeticidad):** El presostato 27 no detectó la falta de estanqueidad, permitiendo el inicio del llenado.\n- **Falla 2 (Válvula Corte 1A):** Al pulsar la Parada de Emergencia, la válvula de corte de GLP no cerró de inmediato.\n- **Falla 3 (Actuador Anillo):** La válvula mecánica del actuador neumático del carrusel falló en cerrar el paso de fluido.\n\n📢 **Incidencia guardada en DB Abastible** • Notificación enviada al supervisor.`,
+        intent: "incident_report",
+      });
+    }
+
     if (lower.includes("distancia") || lower.includes("45kg") || lower.includes("sec")) {
       return NextResponse.json({
         reply: `📜 **Normativa SEC Chile (DS 108 / DS 66) para Cilindros GLP 45kg:**\n\n- **Distancia a aperturas (puertas/ventanas):** Mínimo **1,5 metros**.\n- **Distancia a interruptores/fuentes eléctricas:** Mínimo **3,0 metros**.\n- **Distancia a alcantarillados o pozos:** Mínimo **2,0 metros**.\n\nFormulario exigido: **TC11 SEC** para recintos comerciales con > 3 cilindros.`,
@@ -65,9 +79,9 @@ export async function POST(req: Request) {
       });
     }
 
-    if (lower.includes("fuga masiva") || lower.includes("emergencia") || lower.includes("urgente") || lower.includes("auxilio")) {
+    if (lower.includes("fuga masiva") || lower.includes("emergencia") || lower.includes("urgente") || lower.includes("auxilio") || lower.includes("fuga")) {
       return NextResponse.json({
-        reply: `🚨 **ALERTA DE EMERGENCIA REGISTRADA (CLASE 1):**\n\nHe notificado de inmediato al **Supervisor Central Abastible (+56900000001)** vía WhatsApp.\n\n**Instrucciones de Seguridad en Terreno:**\n1. Evacuar zona de 10 metros a la redonda.\n2. Cortar el suministro principal si es seguro.\n3. Mantener teléfono despejado.`,
+        reply: `🚨 **ALERTA DE EMERGENCIA REGISTRADA EN TIEMPO REAL (CLASE 1):**\n\n📱 **Notificación de WhatsApp enviada al Supervisor Central (+56900000001):**\n*"⚠️ ATENCIÓN: El técnico ${phone} reporta emergencia de Fuga C3 en Carrusel de Llenado. Se requiere asistencia inmediata."*\n\n**Instrucciones de Seguridad en Terreno:**\n1. Evacuar zona de 10 metros a la redonda.\n2. Cortar el suministro principal si es seguro.\n3. Mantener teléfono despejado.`,
         intent: "escalation",
       });
     }
