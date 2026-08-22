@@ -22,16 +22,16 @@ const ABASTIBLE_ROLES: Record<string, RoleConfig> = {
   "tech_glp": {
     roleName: "Técnico Granel & Cilindros GLP",
     presetQueries: [
+      "¿Cuáles son los pasos en la pantalla del PLC para revisar la hermeticidad del cabezal Siraga y validar el Presostato 27?",
+      "¿Cómo funciona el proceso neumático de llenado en las básculas SIRAGA desde que entra el cilindro hasta que se eyecta?",
+      "¿Qué fallas ocurrieron en la secuencia del incidente de Fuga C3 al presionar la parada de emergencia?",
       "¿Cuáles son las distancias de seguridad SEC para cilindros de 45kg?",
-      "¿Cómo actuar ante fuga en válvula de alivio E-VRP-01 de estanque?",
-      "¿Cuándo es obligatorio el Formulario TC11 SEC?",
-      "¿Cuál es el límite máximo de llenado de estanque a granel?",
     ],
     suggestedChips: [
+      { label: "⚙️ Hermeticidad PLC Siraga", query: "¿Cuáles son los pasos en la pantalla del PLC para revisar la hermeticidad del cabezal Siraga y como validar el presostato 27?" },
+      { label: "🚨 Secuencia Fallas Fuga C3", query: "¿Qué fallas ocurrieron en la secuencia del incidente de Fuga C3 al presionar la parada de emergencia?" },
+      { label: "⛽ Llenado Básculas SIRAGA", query: "¿Cómo funciona el proceso neumático de llenado en las básculas SIRAGA desde que entra el cilindro hasta que se eyecta?" },
       { label: "📍 Distancias SEC 45kg", query: "¿Cuáles son las distancias mínimas de seguridad para cilindros 45kg según la SEC?" },
-      { label: "⛽ Máx Llenado Granel (85%)", query: "¿Cuál es el porcentaje máximo de llenado permitido en estanque a granel?" },
-      { label: "📋 Formulario TC11 SEC", query: "¿Cuándo se exige la declaración TC11 de la SEC?" },
-      { label: "🛠️ Fuga Válvula E-VRP-01", query: "¿Cómo solucionar el error E-VRP-01 por escape continuo en válvula?" },
     ],
   },
   "tech_hvac": {
