@@ -339,8 +339,22 @@ export default function DemoSimulatorPage() {
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "8px", fontSize: "10px", opacity: 0.85 }}>
                         <span>{msg.timestamp}</span>
                         {msg.intent && (
-                          <span style={{ background: "#FF6600", color: "#FFF", padding: "2px 6px", borderRadius: "4px", fontWeight: "700" }}>
-                            INTENT: {msg.intent.toUpperCase()}
+                          <span style={{
+                            background: msg.intent === "escalation" ? "#FEF2F2" : msg.intent === "incident_report" ? "#ECFDF5" : "#EFF6FF",
+                            color: msg.intent === "escalation" ? "#DC2626" : msg.intent === "incident_report" ? "#065F46" : "#1D4ED8",
+                            border: msg.intent === "escalation" ? "1px solid #FCA5A5" : msg.intent === "incident_report" ? "1px solid #6EE7B7" : "1px solid #BFDBFE",
+                            padding: "2px 8px",
+                            borderRadius: "12px",
+                            fontWeight: "700",
+                            fontSize: "9.5px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "4px"
+                          }}>
+                            {msg.intent === "query" && "📚 CONSULTA TÉCNICA (RAG)"}
+                            {msg.intent === "escalation" && "🚨 ALERTA ESCALADA A SUPERVISOR"}
+                            {msg.intent === "incident_report" && "✅ INCIDENCIA REGISTRADA EN DB"}
+                            {msg.intent === "unauthorized" && "⛔ SIN AUTORIZACIÓN"}
                           </span>
                         )}
                       </div>
