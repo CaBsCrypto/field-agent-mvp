@@ -46,14 +46,29 @@ export async function POST(req: Request) {
     // 3. Specific Query Matches (Specific Responses per Topic)
     if (lower.includes("siraga") || lower.includes("hermeticidad") || lower.includes("presostato")) {
       return NextResponse.json({
-        reply: `⚙️ **Protocolo de Hermeticidad PLC Báscula SIRAGA (Fuga C3):**\n\n1. **Navegación PLC:** Tecla **F3** ➔ **ENTER** ➔ Código **01024** ➔ **GENERAL** ➔ **PLC** ➔ **STEP BY STEP** ➔ Ajustar **SFC de 0 a 1**.\n2. **Verificación de Sensores:** Con la combinación **SHIFT + ESC**, desconectar el *tubing* de aire y bloquearlo con el dedo.\n3. **Diagnóstico:** El sensor debe cambiar su valor de **1 a 0** al taparlo y de **0 a 1** al soltarlo. Si no cambia, confirma que el **Presostato 27 está defectuoso**.`,
+        reply: `⚙️ Protocolo de Hermeticidad PLC Báscula SIRAGA (Fuga C3)
+
+1. Navegación PLC:
+   Tecla F3 ➔ ENTER ➔ Código 01024 ➔ GENERAL ➔ PLC ➔ STEP BY STEP ➔ Ajustar SFC de 0 a 1.
+
+2. Verificación de Sensores:
+   Con la combinación SHIFT + ESC, desconectar el tubing de aire del cabezal y bloquearlo con el dedo.
+
+3. Diagnóstico Técnico:
+   El sensor debe cambiar su valor de 1 a 0 al taparlo y de 0 a 1 al soltarlo. Si el estado no conmuta, confirma que el Presostato 27 está defectuoso.`,
         intent: "query",
       });
     }
 
     if (lower.includes("secuencia") || lower.includes("incidente") || lower.includes("falla")) {
       return NextResponse.json({
-        reply: `🚨 **Análisis de Secuencia de Fallas — Incidente Fuga C3:**\n\n- **Falla 1 (Sistema Hermeticidad):** El presostato 27 no detectó la falta de estanqueidad, permitiendo el inicio del llenado.\n- **Falla 2 (Válvula Corte 1A):** Al pulsar la Parada de Emergencia, la válvula de corte de GLP no cerró de inmediato.\n- **Falla 3 (Actuador Anillo):** La válvula mecánica del actuador neumático del carrusel falló en cerrar el paso de fluido.\n\n📢 **Incidencia guardada en DB Abastible** • Notificación enviada al supervisor.`,
+        reply: `🚨 Análisis de Secuencia de Fallas — Incidente Fuga C3
+
+• Falla 1 (Sistema Hermeticidad): El presostato 27 no detectó la falta de estanqueidad, permitiendo el inicio del llenado.
+• Falla 2 (Válvula Corte 1A): Al pulsar la Parada de Emergencia, la válvula de corte de GLP no cerró de inmediato.
+• Falla 3 (Actuador Anillo): La válvula mecánica del actuador neumático del carrusel falló en cerrar el paso de fluido.
+
+📢 Incidencia guardada en DB Abastible • Notificación enviada al supervisor.`,
         intent: "incident_report",
       });
     }

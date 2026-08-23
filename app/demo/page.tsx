@@ -320,7 +320,22 @@ export default function DemoSimulatorPage() {
                         fontSize: "13.5px"
                       }}
                     >
-                      {msg.text}
+                      {msg.text.split("\n").map((line, lineIdx) => {
+                        const parts = line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+                        return (
+                          <div key={lineIdx} style={{ marginBottom: line.trim() === "" ? "8px" : "4px" }}>
+                            {parts.map((part, partIdx) => {
+                              if (part.startsWith("**") && part.endsWith("**")) {
+                                return <strong key={partIdx} style={{ color: "#003366" }}>{part.slice(2, -2)}</strong>;
+                              }
+                              if (part.startsWith("*") && part.endsWith("*")) {
+                                return <em key={partIdx} style={{ fontStyle: "italic" }}>{part.slice(1, -1)}</em>;
+                              }
+                              return part;
+                            })}
+                          </div>
+                        );
+                      })}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "8px", fontSize: "10px", opacity: 0.85 }}>
                         <span>{msg.timestamp}</span>
                         {msg.intent && (
