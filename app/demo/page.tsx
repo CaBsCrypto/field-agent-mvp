@@ -358,6 +358,69 @@ export default function DemoSimulatorPage() {
                           </span>
                         )}
                       </div>
+                      {msg.sender === "bot" && msg.intent === "query" && (
+                        <div style={{ marginTop: "12px", paddingTop: "10px", borderTop: "1px dashed #E2E8F0", display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                          <button
+                            type="button"
+                            onClick={() => handleSendMessage("✅ Paso 1 ejecutado. Procediendo con verificación de sensores en pantalla PLC.")}
+                            style={{
+                              background: "#003366",
+                              color: "#FFFFFF",
+                              border: "none",
+                              padding: "6px 12px",
+                              borderRadius: "6px",
+                              fontSize: "11px",
+                              fontWeight: "700",
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "4px"
+                            }}
+                          >
+                            ▶️ Ejecutar Paso 1
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleSendMessage("✅ Verificación completada con éxito. El equipo quedó operando sin fallas.")}
+                            style={{
+                              background: "#10B981",
+                              color: "#FFFFFF",
+                              border: "none",
+                              padding: "6px 12px",
+                              borderRadius: "6px",
+                              fontSize: "11px",
+                              fontWeight: "700",
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "4px"
+                            }}
+                          >
+                            ✅ Marcar Resuelto
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleSendMessage("🚨 El presostato 27 no responde. Solicito asistencia del supervisor inmediato.")}
+                            style={{
+                              background: "#EF4444",
+                              color: "#FFFFFF",
+                              border: "none",
+                              padding: "6px 12px",
+                              borderRadius: "6px",
+                              fontSize: "11px",
+                              fontWeight: "700",
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "4px"
+                            }}
+                          >
+                            🚨 Escalar a Supervisor
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
