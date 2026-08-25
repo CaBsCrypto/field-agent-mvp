@@ -101,6 +101,7 @@ export default function DemoSimulatorPage() {
   ]);
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedDocModal, setSelectedDocModal] = useState<{ title: string; filename: string } | null>(null);
   const [showConfigMobile, setShowConfigMobile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -362,9 +363,31 @@ export default function DemoSimulatorPage() {
                         )}
                       </div>
                       {msg.sender === "bot" && msg.sourceDoc && (
-                        <div style={{ marginTop: "10px", background: "#F1F5F9", border: "1px solid #CBD5E1", borderRadius: "8px", padding: "10px 12px", fontSize: "11.5px", color: "#334155" }}>
-                          <div style={{ fontWeight: "700", color: "#003366", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
-                            <FileText size={14} color="#FF6600" /> Fuente PDF / Manual Indexado:
+                        <div 
+                          onClick={() => setSelectedDocModal({
+                            title: "Documento Técnico Oficial Abastible — Básculas SIRAGA & Fuga C3",
+                            filename: msg.sourceDoc || "08-basculas-siraga-hermeticidad-fuga-c3.md"
+                          })}
+                          style={{
+                            marginTop: "10px",
+                            background: "#F1F5F9",
+                            border: "1px solid #BFDBFE",
+                            borderRadius: "8px",
+                            padding: "10px 12px",
+                            fontSize: "11.5px",
+                            color: "#334155",
+                            cursor: "pointer",
+                            transition: "all 0.15s",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.02)"
+                          }}
+                        >
+                          <div style={{ fontWeight: "700", color: "#003366", display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
+                            <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                              <FileText size={14} color="#FF6600" /> Fuente PDF / Manual Indexado:
+                            </span>
+                            <span style={{ fontSize: "10px", background: "#003366", color: "#FFF", padding: "2px 8px", borderRadius: "10px", fontWeight: "700" }}>
+                              🔍 Abrir Documento Real ➔
+                            </span>
                           </div>
                           <div style={{ fontFamily: "monospace", fontSize: "11px", color: "#0F172A", background: "#FFFFFF", padding: "4px 8px", borderRadius: "4px", border: "1px solid #E2E8F0", display: "inline-block", marginBottom: "6px" }}>
                             📄 {msg.sourceDoc}
@@ -514,6 +537,131 @@ export default function DemoSimulatorPage() {
           </div>
 
         </div>
+
+        {/* Document Viewer Modal */}
+        {selectedDocModal && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(15, 23, 42, 0.65)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1100,
+            padding: "20px"
+          }}>
+            <div style={{
+              background: "#FFFFFF",
+              borderRadius: "16px",
+              maxWidth: "760px",
+              width: "100%",
+              maxHeight: "85vh",
+              display: "flex",
+              flexDirection: "column",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+              border: "1px solid #E2E8F0",
+              overflow: "hidden"
+            }}>
+              
+              {/* Modal Header */}
+              <div style={{
+                background: "#003366",
+                color: "#FFFFFF",
+                padding: "18px 24px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                borderBottom: "4px solid #FF6600"
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <FileText size={22} color="#FF6600" />
+                  <div>
+                    <h3 style={{ fontSize: "15px", fontWeight: "700", margin: 0 }}>{selectedDocModal.title}</h3>
+                    <p style={{ fontSize: "11px", color: "#CBD5E1", margin: "2px 0 0 0" }}>Archivo Indexado: {selectedDocModal.filename}</p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedDocModal(null)}
+                  style={{ background: "transparent", border: "none", color: "#FFFFFF", cursor: "pointer", padding: "4px" }}
+                >
+                  <X size={22} />
+                </button>
+              </div>
+
+              {/* Modal Content - Manual Text Stream */}
+              <div style={{ padding: "24px", overflowY: "auto", flex: 1, background: "#F8FAFC", fontSize: "13.5px", lineHeight: "1.7", color: "#1E293B" }}>
+                
+                <div style={{ background: "#E0F2FE", border: "1px solid #7DD3FC", borderRadius: "8px", padding: "12px 16px", marginBottom: "16px", fontSize: "12px", color: "#075985", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <CheckCircle size={16} color="#0284C7" />
+                  <span>Documento oficial parseado e indexado en el motor <strong>Vector RAG de Supabase</strong> de Abastible.</span>
+                </div>
+
+                <h4 style={{ color: "#003366", fontSize: "16px", fontWeight: "800", marginTop: 0 }}>1. Principio de Funcionamiento de Básculas SIRAGA & Hermeticidad</h4>
+                <ol style={{ paddingLeft: "20px", margin: "10px 0" }}>
+                  <li><strong>Posicionamiento:</strong> El cilindro de GLP se posiciona en la romana de llenado.</li>
+                  <li><strong>Detección PLC:</strong> El PLC detecta la presencia del cilindro en el interior de la romana mediante la celda de carga (requiere un peso registrado mayor a 5 kg).</li>
+                  <li><strong>Señal Eléctrica VAL1:</strong> El PLC envía una señal eléctrica a la válvula VAL1 activando el cilindro 1C (centrado) y 1D (posiciona cabeza de llenado).</li>
+                  <li><strong>Prueba de Hermeticidad (Presostato 27):**</strong> Se genera una presión neumática para asegurar la estanqueidad. La estanqueidad es confirmada e indicada al PLC por el <strong>Presostato 27</strong>.</li>
+                  <li><strong>Señal Eléctrica VAL2 (Llenado):**</strong> Cumplidas las 3 condiciones, VAL2 conmuta enviando aire a la válvula de corte GLP 1A y cabeza de llenado 162.</li>
+                  <li><strong>Cierre de Llenado & Eyección (VAL3):**</strong> Al completar el peso, se corta la señal de VAL1/VAL2 y con la señal magnética la válvula VAL3 activa el cilindro 1B para la eyección.</li>
+                </ol>
+
+                <h4 style={{ color: "#003366", fontSize: "16px", fontWeight: "800", marginTop: "20px" }}>2. Guía Paso a Paso: Acceso a Revisión de Hermeticidad (Cabezal SIRAGA)</h4>
+                <ul style={{ paddingLeft: "20px", margin: "10px 0" }}>
+                  <li><strong>Bloqueo Preventivo:</strong> Bloquear la alimentación de GLP con dispositivo específico.</li>
+                  <li><strong>Navegación PLC:</strong> Tecla <code>F3</code> ➔ <code>ENTER</code> ➔ Código <code>01024</code> ➔ <code>GENERAL</code> ➔ <code>PLC</code> ➔ <code>STEP BY STEP</code> ➔ Ajustar <code>SFC de 0 a 1</code>. Presionando F2 se avanza paso a paso.</li>
+                  <li><strong>Verificación de Sensores:</strong> Presionar <code>SHIFT + ESC</code> en menú principal. Al bajar el cabezal, desconectar el tubing de aire y bloquearlo con el dedo. El sensor debe cambiar de <code>1 a 0</code> al taparlo y de <code>0 a 1</code> al soltarlo. Si no conmuta, el <strong>Presostato 27 está defectuoso</strong>.</li>
+                </ul>
+
+                <h4 style={{ color: "#003366", fontSize: "16px", fontWeight: "800", marginTop: "20px" }}>3. Secuencia de Fallas & Análisis de Incidente (Fuga C3)</h4>
+                <ul style={{ paddingLeft: "20px", margin: "10px 0" }}>
+                  <li><strong>Falla 1 (Hermeticidad):</strong> Si el sistema hubiese actuado (detectando falta de estanqueidad en Presostato 27), el cabezal no debería haber comenzado a llenar.</li>
+                  <li><strong>Falla 2 (Válvula Corte 1A):</strong> Al apretar la Parada de Emergencia, la válvula de corte debió haber cerrado.</li>
+                  <li><strong>Falla 3 (Actuador Anillo):</strong> Al apretar la Parada de Emergencia, el actuador neumático debió haber cerrado impidiendo la liberación de fluido C3.</li>
+                </ul>
+
+              </div>
+
+              {/* Modal Footer */}
+              <div style={{
+                background: "#F8FAFC",
+                padding: "14px 24px",
+                borderTop: "1px solid #E2E8F0",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center"
+              }}>
+                <span style={{ fontSize: "11px", color: "#64748B", fontFamily: "monospace" }}>
+                  DOCUMENTO: 08-basculas-siraga-hermeticidad-fuga-c3.md
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedDocModal(null)}
+                  style={{
+                    padding: "8px 18px",
+                    borderRadius: "8px",
+                    border: "none",
+                    background: "#003366",
+                    color: "#FFFFFF",
+                    fontWeight: "700",
+                    fontSize: "12.5px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Cerrar Visualizador
+                </button>
+              </div>
+
+            </div>
+          </div>
+        )}
 
       </div>
     </div>
