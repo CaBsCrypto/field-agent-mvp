@@ -386,29 +386,26 @@ export default function DemoSimulatorPage() {
                               📄 {msg.sourceDoc}
                             </div>
 
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedDocModal({
-                                  title: "Documento Técnico Oficial Abastible — Básculas SIRAGA & Fuga C3",
-                                  filename: msg.sourceDoc || "08-basculas-siraga-hermeticidad-fuga-c3.md"
-                                });
-                              }}
+                            <a
+                              href="/admin/training"
+                              target="_blank"
+                              rel="noopener noreferrer"
                               style={{
                                 background: "#003366",
                                 color: "#FFFFFF",
-                                border: "none",
+                                textDecoration: "none",
                                 borderRadius: "6px",
                                 padding: "5px 10px",
                                 fontSize: "10.5px",
                                 fontWeight: "700",
-                                cursor: "pointer",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "4px",
                                 boxShadow: "0 2px 4px rgba(0,51,102,0.2)"
                               }}
                             >
-                              🔍 Abrir Documento Real ➔
-                            </button>
+                              ⚙️ Ver en Portal Admin ➔
+                            </a>
                           </div>
 
                           {msg.docSnippet && (
