@@ -63,6 +63,7 @@ interface SharePointSyncResult {
 }
 
 const INITIAL_DOCS: DocumentItem[] = [
+  { name: "08-basculas-siraga-hermeticidad-fuga-c3.md", category: "Básculas SIRAGA / GLP", size: "32 KB", status: "active", lastUpdated: "Ahora mismo", chunksCount: 16, source: "Presentación PPTX Oficial Abastible" },
   { name: "05-normativa-sec-glp-cilindros.md", category: "SEC Chile / GLP", size: "26 KB", status: "active", lastUpdated: "Hoy", chunksCount: 14, source: "SharePoint Office 365" },
   { name: "06-protocolo-estanques-glp-abastible.md", category: "Abastible Granel", size: "19 KB", status: "active", lastUpdated: "Hoy", chunksCount: 11, source: "SharePoint Office 365" },
   { name: "01-codigos-error-hvac.md", category: "Mantenimiento HVAC", size: "26 KB", status: "active", lastUpdated: "Ayer", chunksCount: 18, source: "Eskuad Forms API" },
