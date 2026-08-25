@@ -83,10 +83,7 @@ const ABASTIBLE_ROLES: Record<string, RoleConfig> = {
 
 const MOCK_TECHNICIANS = [
   { id: "tech_siraga", name: "Roberto Araya", roleKey: "tech_siraga", phone: "+56955554321", displayRole: "Especialista Básculas SIRAGA & Carrusel C3", isAuth: true },
-  { id: "tech_glp", name: "Juan Pérez", roleKey: "tech_glp", phone: "+56912345678", displayRole: "Técnico GLP (Granel/Cilindros)", isAuth: true },
-  { id: "tech_hvac", name: "Carlos Muñoz", roleKey: "tech_hvac", phone: "+56987654321", displayRole: "Técnico Climatización & Bombas", isAuth: true },
-  { id: "supervisor", name: "Pedro Soto", roleKey: "supervisor", phone: "+56900000001", displayRole: "Supervisor de Operaciones", isAuth: true },
-  { id: "denied", name: "Usuario Desconocido", roleKey: "tech_glp", phone: "+56999999999", displayRole: "Sin Autorización (No Whitelist)", isAuth: false },
+  { id: "denied", name: "Usuario Desconocido", roleKey: "tech_siraga", phone: "+56999999999", displayRole: "Sin Autorización (No Whitelist)", isAuth: false },
 ];
 
 export default function DemoSimulatorPage() {
