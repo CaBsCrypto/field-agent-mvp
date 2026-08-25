@@ -364,10 +364,6 @@ export default function DemoSimulatorPage() {
                       </div>
                       {msg.sender === "bot" && msg.sourceDoc && (
                         <div 
-                          onClick={() => setSelectedDocModal({
-                            title: "Documento Técnico Oficial Abastible — Básculas SIRAGA & Fuga C3",
-                            filename: msg.sourceDoc || "08-basculas-siraga-hermeticidad-fuga-c3.md"
-                          })}
                           style={{
                             marginTop: "10px",
                             background: "#F1F5F9",
@@ -376,24 +372,47 @@ export default function DemoSimulatorPage() {
                             padding: "10px 12px",
                             fontSize: "11.5px",
                             color: "#334155",
-                            cursor: "pointer",
-                            transition: "all 0.15s",
                             boxShadow: "0 2px 4px rgba(0,0,0,0.02)"
                           }}
                         >
-                          <div style={{ fontWeight: "700", color: "#003366", display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
+                          <div style={{ fontWeight: "700", color: "#003366", display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
                             <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                               <FileText size={14} color="#FF6600" /> Fuente PDF / Manual Indexado:
                             </span>
-                            <span style={{ fontSize: "10px", background: "#003366", color: "#FFF", padding: "2px 8px", borderRadius: "10px", fontWeight: "700" }}>
+                          </div>
+                          
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
+                            <div style={{ fontFamily: "monospace", fontSize: "11px", color: "#0F172A", background: "#FFFFFF", padding: "4px 8px", borderRadius: "4px", border: "1px solid #CBD5E1" }}>
+                              📄 {msg.sourceDoc}
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedDocModal({
+                                  title: "Documento Técnico Oficial Abastible — Básculas SIRAGA & Fuga C3",
+                                  filename: msg.sourceDoc || "08-basculas-siraga-hermeticidad-fuga-c3.md"
+                                });
+                              }}
+                              style={{
+                                background: "#003366",
+                                color: "#FFFFFF",
+                                border: "none",
+                                borderRadius: "6px",
+                                padding: "5px 10px",
+                                fontSize: "10.5px",
+                                fontWeight: "700",
+                                cursor: "pointer",
+                                boxShadow: "0 2px 4px rgba(0,51,102,0.2)"
+                              }}
+                            >
                               🔍 Abrir Documento Real ➔
-                            </span>
+                            </button>
                           </div>
-                          <div style={{ fontFamily: "monospace", fontSize: "11px", color: "#0F172A", background: "#FFFFFF", padding: "4px 8px", borderRadius: "4px", border: "1px solid #E2E8F0", display: "inline-block", marginBottom: "6px" }}>
-                            📄 {msg.sourceDoc}
-                          </div>
+
                           {msg.docSnippet && (
-                            <div style={{ fontStyle: "italic", color: "#64748B", lineHeight: "1.4" }}>
+                            <div style={{ fontStyle: "italic", color: "#64748B", lineHeight: "1.4", marginTop: "6px" }}>
                               "{msg.docSnippet}"
                             </div>
                           )}
