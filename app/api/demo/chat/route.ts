@@ -160,14 +160,48 @@ El sensor no cambió su estado neumático de 1 a 0. Esto confirma que el Presost
       });
     }
 
-    // 4. Default Disambiguation Response (3 Probable Options)
+    // 4. Dynamic Live Gemini AI + Vector RAG Search for ANY arbitrary custom question
+    try {
+      const { getSemanticKnowledgeContext } = await import("@/lib/ai/vectorRAG");
+      const { GoogleGenerativeAI } = await import("@google/generative-ai");
+
+      const ragContext = await getSemanticKnowledgeContext(message, 3);
+
+      if (ragContext && ragContext.trim().length > 30) {
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (apiKey && apiKey !== "your_gemini_api_key_here") {
+          const client = new GoogleGenerativeAI(apiKey);
+          const model = client.getGenerativeModel({
+            model: "gemini-2.5-flash",
+            systemInstruction: `Eres el Asistente Técnico de Campo de Abastible. Responde al técnico de forma concisa (máximo 120 palabras), clara y estructurada usando la información de la Base de Conocimiento. Si la respuesta proviene de la documentación, menciona el manual de origen.`
+          });
+
+          const prompt = `Consulta del técnico: "${message}"\n\nBASE DE CONOCIMIENTO DISPONIBLE:\n${ragContext}`;
+          const aiRes = await model.generateContent(prompt);
+          const aiText = aiRes.response.text().trim();
+
+          return NextResponse.json({
+            reply: aiText,
+            intent: "query",
+            sourceDoc: "Base de Conocimiento RAG Abastible",
+            docSnippet: "Respuesta generada dinámicamente mediante búsqueda semántica RAG sobre manuales corporativos indexados."
+          });
+        }
+      }
+    } catch (ragErr) {
+      console.warn("[Demo Chat API] Live RAG fallback notice:", ragErr);
+    }
+
+    // Fallback disabiguation if no Gemini key or offline
     const searchResults = await performHybridSearch(message, 3);
-    const optionsReply = `🔍 **Analicé tu consulta para el área de Abastible y encontré 3 posibles fallas asociadas:**\n\n1️⃣ **Código E-01:** Presión de refrigerante R410A anormal / Fuga en cañería.\n2️⃣ **Código E-VRP-01:** Escape continuo en Válvula de Seguridad del estanque a granel.\n3️⃣ **Código E-03:** Sensor de temperatura descalibrado en bombas GLP.\n\n👉 **Responde con 1, 2 o 3** para ver los 3 pasos de solución exacta.`;
+    const optionsReply = `🔍 **Analicé tu consulta en la Base de Datos de Abastible:**\n\nEncontré coincidencia semántica en los manuales de **Básculas SIRAGA & Hermeticidad (Fuga C3)**.\n\n👉 Puedes consultar directamente sobre:\n- Pasos de calibración del Presostato 27 en el PLC.\n- Distancias de seguridad SEC (DS 108 / DS 66).\n- Secuencia de fallas en el carrusel de llenado.`;
 
     return NextResponse.json({
       reply: optionsReply,
       intent: "query",
       searchResultsCount: searchResults.length,
+      sourceDoc: "08-basculas-siraga-hermeticidad-fuga-c3.md",
+      docSnippet: "Manual Técnico de Operación: Básculas SIRAGA & Protocolo de Hermeticidad (Fuga C3 Abastible)"
     });
 
   } catch (error) {
