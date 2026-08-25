@@ -48,15 +48,67 @@ export async function POST(req: Request) {
       return NextResponse.json({
         reply: `⚙️ Protocolo de Hermeticidad PLC Báscula SIRAGA (Fuga C3)
 
-1. Navegación PLC:
-   Tecla F3 ➔ ENTER ➔ Código 01024 ➔ GENERAL ➔ PLC ➔ STEP BY STEP ➔ Ajustar SFC de 0 a 1.
+📌 Paso 1 — Navegación en Pantalla PLC:
+   • Presionar tecla F3 ➔ ENTER
+   • Ingresar Código de Acceso Técnico: 01024 ➔ ENTER
+   • Ir a menú GENERAL ➔ PLC ➔ STEP BY STEP
+   • Cambiar parámetro SFC de 0 a 1 (Permite avance manual por pasos con F2).
 
-2. Verificación de Sensores:
-   Con la combinación SHIFT + ESC, desconectar el tubing de aire del cabezal y bloquearlo con el dedo.
+📌 Paso 2 — Prueba Física de Sensores (Presostato 27):
+   • Presionar SHIFT + ESC en el menú principal para desplegar el mapa de I/O.
+   • Desconectar el tubing de aire del cabezal de llenado.
+   • Bloquear el tubing con el dedo.
 
-3. Diagnóstico Técnico:
-   El sensor debe cambiar su valor de 1 a 0 al taparlo y de 0 a 1 al soltarlo. Si el estado no conmuta, confirma que el Presostato 27 está defectuoso.`,
+❓ ¿Cuál fue la lectura que dio el sensor en pantalla al tapar el tubing?
+(Responde "conmutó a 0" o "se quedó en 1")`,
         intent: "query",
+        sourceDoc: "08-basculas-siraga-hermeticidad-fuga-c3.md",
+        docSnippet: "Página 5: Acceso a revisión de hermeticidad cabezal Siraga. Código 01024. Al bloquear con el dedo el tubing de aire, el sensor debiese pasar de 1 a 0, y al soltarlo de 0 a 1.",
+        followUpButtons: [
+          { label: "✅ Conmutó de 1 a 0 (Sensor OK)", query: "El sensor conmutó de 1 a 0 correctamente al tapar el tubing." },
+          { label: "⚠️ Se quedó en 1 (Sensor Defectuoso)", query: "El sensor se quedó en 1 y no conmutó al tapar el tubing." },
+          { label: "🚨 Solicitud de Escalación", query: "🚨 El presostato 27 no responde. Solicito asistencia del supervisor inmediato." }
+        ]
+      });
+    }
+
+    if (lower.includes("conmutó de 1 a 0") || lower.includes("sensor ok")) {
+      return NextResponse.json({
+        reply: `✅ **Diagnóstico Presostato 27: CORRECTO**
+
+El Presostato 27 está operando con total estanqueidad. La señal neumática conmuta correctamente en el PLC.
+
+📌 **Siguiente Acción Sugerida:**
+Reconectar el tubing de aire al cabezal Siraga, desactivar el modo STEP BY STEP (SFC de 1 a 0) y reanudar el carrusel de llenado.
+
+¿Deseas registrar este mantenimiento como completado en el sistema Abastible?`,
+        intent: "query",
+        sourceDoc: "08-basculas-siraga-hermeticidad-fuga-c3.md",
+        docSnippet: "Página 5: Verificación de sensores de hermeticidad.",
+        followUpButtons: [
+          { label: "✅ Registrar Mantención OK", query: "Completé la mantención preventiva de hermeticidad sin fallas." },
+          { label: "⚙️ Volver a Probar PLC", query: "¿Cuáles son los pasos en la pantalla del PLC para revisar la hermeticidad?" }
+        ]
+      });
+    }
+
+    if (lower.includes("se quedó en 1") || lower.includes("defectuoso")) {
+      return NextResponse.json({
+        reply: `🚨 **DIAGNÓSTICO CRÍTICO: FALLA EN PRESOSTATO 27**
+
+El sensor no cambió su estado neumático de 1 a 0. Esto confirma que el Presostato 27 se encuentra trabado o descalibrado, lo que impidió la detección de falta de estanqueidad durante el incidente Fuga C3.
+
+⚠️ **Protocolo de Seguridad:**
+1. NO iniciar el llenado en este cabezal.
+2. Bloquear la línea de alimentación neumática.
+3. Reemplazar el presostato o escalar de inmediato a la central.`,
+        intent: "escalation",
+        sourceDoc: "08-basculas-siraga-hermeticidad-fuga-c3.md",
+        docSnippet: "Página 6: Secuencia de Fallas Incidente C3. Falla 1: Si el Sistema de Hermeticidad hubiese actuado, el cabezal no debería haber comenzado a llenar.",
+        followUpButtons: [
+          { label: "🚨 Escalar a Supervisor Ahora", query: "🚨 Fuga e incidente en presostato 27. Solicito asistencia urgente." },
+          { label: "📋 Ver Secuencia de Fallas C3", query: "¿Qué fallas ocurrieron en la secuencia del incidente de Fuga C3?" }
+        ]
       });
     }
 

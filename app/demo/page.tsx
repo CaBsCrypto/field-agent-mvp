@@ -10,6 +10,9 @@ interface Message {
   text: string;
   timestamp: string;
   intent?: string;
+  sourceDoc?: string;
+  docSnippet?: string;
+  followUpButtons?: { label: string; query: string }[];
 }
 
 interface RoleConfig {
@@ -146,6 +149,9 @@ export default function DemoSimulatorPage() {
         text: data.reply || "Sin respuesta del servidor",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         intent: data.intent,
+        sourceDoc: data.sourceDoc,
+        docSnippet: data.docSnippet,
+        followUpButtons: data.followUpButtons,
       };
 
       setMessages((prev) => [...prev, botMsg]);
@@ -355,67 +361,66 @@ export default function DemoSimulatorPage() {
                           </span>
                         )}
                       </div>
-                      {msg.sender === "bot" && msg.intent === "query" && (
+                      {msg.sender === "bot" && msg.sourceDoc && (
+                        <div style={{ marginTop: "10px", background: "#F1F5F9", border: "1px solid #CBD5E1", borderRadius: "8px", padding: "10px 12px", fontSize: "11.5px", color: "#334155" }}>
+                          <div style={{ fontWeight: "700", color: "#003366", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                            <FileText size={14} color="#FF6600" /> Fuente PDF / Manual Indexado:
+                          </div>
+                          <div style={{ fontFamily: "monospace", fontSize: "11px", color: "#0F172A", background: "#FFFFFF", padding: "4px 8px", borderRadius: "4px", border: "1px solid #E2E8F0", display: "inline-block", marginBottom: "6px" }}>
+                            📄 {msg.sourceDoc}
+                          </div>
+                          {msg.docSnippet && (
+                            <div style={{ fontStyle: "italic", color: "#64748B", lineHeight: "1.4" }}>
+                              "{msg.docSnippet}"
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {msg.sender === "bot" && (msg.followUpButtons || msg.intent === "query") && (
                         <div style={{ marginTop: "12px", paddingTop: "10px", borderTop: "1px dashed #E2E8F0", display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                          <button
-                            type="button"
-                            onClick={() => handleSendMessage("✅ Paso 1 ejecutado. Procediendo con verificación de sensores en pantalla PLC.")}
-                            style={{
-                              background: "#003366",
-                              color: "#FFFFFF",
-                              border: "none",
-                              padding: "6px 12px",
-                              borderRadius: "6px",
-                              fontSize: "11px",
-                              fontWeight: "700",
-                              cursor: "pointer",
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: "4px"
-                            }}
-                          >
-                            ▶️ Ejecutar Paso 1
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleSendMessage("✅ Verificación completada con éxito. El equipo quedó operando sin fallas.")}
-                            style={{
-                              background: "#10B981",
-                              color: "#FFFFFF",
-                              border: "none",
-                              padding: "6px 12px",
-                              borderRadius: "6px",
-                              fontSize: "11px",
-                              fontWeight: "700",
-                              cursor: "pointer",
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: "4px"
-                            }}
-                          >
-                            ✅ Marcar Resuelto
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleSendMessage("🚨 El presostato 27 no responde. Solicito asistencia del supervisor inmediato.")}
-                            style={{
-                              background: "#EF4444",
-                              color: "#FFFFFF",
-                              border: "none",
-                              padding: "6px 12px",
-                              borderRadius: "6px",
-                              fontSize: "11px",
-                              fontWeight: "700",
-                              cursor: "pointer",
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: "4px"
-                            }}
-                          >
-                            🚨 Escalar a Supervisor
-                          </button>
+                          {msg.followUpButtons && msg.followUpButtons.length > 0 ? (
+                            msg.followUpButtons.map((btn, bIdx) => (
+                              <button
+                                key={bIdx}
+                                type="button"
+                                onClick={() => handleSendMessage(btn.query)}
+                                style={{
+                                  background: btn.query.includes("🚨") || btn.query.includes("urgente") ? "#EF4444" : btn.query.includes("OK") || btn.query.includes("correctamente") ? "#10B981" : "#003366",
+                                  color: "#FFFFFF",
+                                  border: "none",
+                                  padding: "7px 13px",
+                                  borderRadius: "8px",
+                                  fontSize: "11.5px",
+                                  fontWeight: "700",
+                                  cursor: "pointer",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "4px",
+                                  boxShadow: "0 2px 6px rgba(0,0,0,0.08)"
+                                }}
+                              >
+                                {btn.label}
+                              </button>
+                            ))
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handleSendMessage("✅ El sensor conmutó de 1 a 0 correctamente al tapar el tubing.")}
+                                style={{ background: "#003366", color: "#FFF", border: "none", padding: "6px 12px", borderRadius: "6px", fontSize: "11px", fontWeight: "700", cursor: "pointer" }}
+                              >
+                                ▶️ Responder Lectura Sensor
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleSendMessage("Completé la mantención preventiva sin fallas.")}
+                                style={{ background: "#10B981", color: "#FFF", border: "none", padding: "6px 12px", borderRadius: "6px", fontSize: "11px", fontWeight: "700", cursor: "pointer" }}
+                              >
+                                ✅ Marcar Resuelto
+                              </button>
+                            </>
+                          )}
                         </div>
                       )}
                     </div>
