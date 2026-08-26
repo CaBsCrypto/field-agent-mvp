@@ -45,8 +45,8 @@ export default function AdminDashboardPage() {
               <span>MANUALES RAG ACTIVOS</span>
               <FileText size={16} color="#FF6600" />
             </div>
-            <div style={{ fontSize: "28px", fontWeight: "800", color: "#FF6600" }}>6</div>
-            <div style={{ fontSize: "11px", color: "#64748B", marginTop: "4px" }}>Normativa SEC & Abastible (Haz clic)</div>
+            <div style={{ fontSize: "28px", fontWeight: "800", color: "#FF6600" }}>1</div>
+            <div style={{ fontSize: "11px", color: "#64748B", marginTop: "4px" }}>Básculas SIRAGA & Fuga C3 (Haz clic)</div>
           </div>
 
           {/* Card 4: Benchmark Test Suite */}
@@ -195,17 +195,9 @@ export default function AdminDashboardPage() {
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <div style={{ background: "#F8FAFC", padding: "10px 14px", borderRadius: "8px", border: "1px solid #E2E8F0", fontSize: "12.5px" }}>
-                  📄 <strong>05-normativa-sec-glp-cilindros.md</strong> (SEC Chile DS 108 / Formulario TC11)
-                </div>
-                <div style={{ background: "#F8FAFC", padding: "10px 14px", borderRadius: "8px", border: "1px solid #E2E8F0", fontSize: "12.5px" }}>
-                  📄 <strong>06-protocolo-estanques-glp-abastible.md</strong> (Límite 85% Granel / Válvula E-VRP-01)
-                </div>
-                <div style={{ background: "#F8FAFC", padding: "10px 14px", borderRadius: "8px", border: "1px solid #E2E8F0", fontSize: "12.5px" }}>
-                  📄 <strong>01-codigos-error-hvac.md</strong> (Tabla Maestra de Errores E-01 a E-20)
-                </div>
-                <div style={{ background: "#F8FAFC", padding: "10px 14px", borderRadius: "8px", border: "1px solid #E2E8F0", fontSize: "12.5px" }}>
-                  📄 <strong>02-protocolo-mantenimiento-preventivo.md</strong> (Checklist de Inspección 15 puntos)
+                <div style={{ background: "#EFF6FF", padding: "12px 14px", borderRadius: "8px", border: "1px solid #BFDBFE", fontSize: "12.5px", color: "#1E3A8A" }}>
+                  📄 <strong>08-basculas-siraga-hermeticidad-fuga-c3.md</strong><br />
+                  <span style={{ fontSize: "11px", color: "#3B82F6" }}>📡 Origen: Presentación PPTX Oficial Abastible • 16 Embeddings Activos en Supabase</span>
                 </div>
               </div>
 
