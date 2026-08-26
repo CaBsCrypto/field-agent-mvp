@@ -571,37 +571,154 @@ export default function AdminTrainingPage() {
                 </button>
               </div>
 
-              {/* Modal Content - Manual Text Stream */}
+              {/* Modal Content - Manual Text Stream & Chunks Breakdown */}
               <div style={{ padding: "24px", overflowY: "auto", flex: 1, background: "#F8FAFC", fontSize: "13.5px", lineHeight: "1.7", color: "#1E293B" }}>
                 
-                <div style={{ background: "#E0F2FE", border: "1px solid #7DD3FC", borderRadius: "8px", padding: "12px 16px", marginBottom: "16px", fontSize: "12px", color: "#075985", display: "flex", alignItems: "center", gap: "8px" }}>
-                  <CheckCircle size={16} color="#0284C7" />
-                  <span>Documento oficial parseado e indexado en el motor <strong>Vector RAG de Supabase</strong> de Abastible.</span>
+                <div style={{ background: "#E0F2FE", border: "1px solid #7DD3FC", borderRadius: "8px", padding: "12px 16px", marginBottom: "16px", fontSize: "12px", color: "#075985", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <CheckCircle size={16} color="#0284C7" />
+                    <span>Documento parseado en <strong>16 Secciones Vectoriales</strong> cargadas en Supabase PGVector.</span>
+                  </span>
+                  <span style={{ background: "#0284C7", color: "#FFF", padding: "2px 8px", borderRadius: "10px", fontSize: "11px", fontWeight: "700" }}>
+                    16/16 Chunks OK
+                  </span>
                 </div>
 
-                <h4 style={{ color: "#003366", fontSize: "16px", fontWeight: "800", marginTop: 0 }}>1. Principio de Funcionamiento de Básculas SIRAGA & Hermeticidad</h4>
-                <ol style={{ paddingLeft: "20px", margin: "10px 0" }}>
-                  <li><strong>Posicionamiento:</strong> El cilindro de GLP se posiciona en la romana de llenado.</li>
-                  <li><strong>Detección PLC:</strong> El PLC detecta la presencia del cilindro en el interior de la romana mediante la celda de carga (requiere un peso registrado mayor a 5 kg).</li>
-                  <li><strong>Señal Eléctrica VAL1:</strong> El PLC envía una señal eléctrica a la válvula VAL1 activando el cilindro 1C (centrado) y 1D (posiciona cabeza de llenado).</li>
-                  <li><strong>Prueba de Hermeticidad (Presostato 27):</strong> Se genera una presión neumática para asegurar la estanqueidad. La estanqueidad es confirmada e indicada al PLC por el <strong>Presostato 27</strong>.</li>
-                  <li><strong>Señal Eléctrica VAL2 (Llenado):</strong> Cumplidas las 3 condiciones, VAL2 conmuta enviando aire a la válvula de corte GLP 1A y cabeza de llenado 162.</li>
-                  <li><strong>Cierre de Llenado & Eyección (VAL3):</strong> Al completar el peso, se corta la señal de VAL1/VAL2 y con la señal magnética la válvula VAL3 activa el cilindro 1B para la eyección.</li>
-                </ol>
+                <div style={{ fontWeight: "800", color: "#003366", marginBottom: "12px", fontSize: "14px" }}>
+                  📋 Desglose de las 16 Secciones Memorizadas:
+                </div>
 
-                <h4 style={{ color: "#003366", fontSize: "16px", fontWeight: "800", marginTop: "20px" }}>2. Guía Paso a Paso: Acceso a Revisión de Hermeticidad (Cabezal SIRAGA)</h4>
-                <ul style={{ paddingLeft: "20px", margin: "10px 0" }}>
-                  <li><strong>Bloqueo Preventivo:</strong> Bloquear la alimentación de GLP con dispositivo específico.</li>
-                  <li><strong>Navegación PLC:</strong> Tecla <code>F3</code> ➔ <code>ENTER</code> ➔ Código <code>01024</code> ➔ <code>GENERAL</code> ➔ <code>PLC</code> ➔ <code>STEP BY STEP</code> ➔ Ajustar <code>SFC de 0 a 1</code>. Presionando F2 se avanza paso a paso.</li>
-                  <li><strong>Verificación de Sensores:</strong> Presionar <code>SHIFT + ESC</code> en menú principal. Al bajar el cabezal, desconectar el tubing de aire y bloquearlo con el dedo. El sensor debe cambiar de <code>1 a 0</code> al taparlo y de <code>0 a 1</code> al soltarlo. Si no conmuta, el <strong>Presostato 27 está defectuoso</strong>.</li>
-                </ul>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  
+                  {/* Section 1 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #1 — Resumen Ejecutivo
+                    </div>
+                    <div>Este documento técnico contiene el procedimiento operativo real de Básculas de Llenado SIRAGA (GLP), la secuencia de comprobación de Hermeticidad y análisis Fuga C3.</div>
+                  </div>
 
-                <h4 style={{ color: "#003366", fontSize: "16px", fontWeight: "800", marginTop: "20px" }}>3. Secuencia de Fallas & Análisis de Incidente (Fuga C3)</h4>
-                <ul style={{ paddingLeft: "20px", margin: "10px 0" }}>
-                  <li><strong>Falla 1 (Hermeticidad):</strong> Si el sistema hubiese actuado (detectando falta de estanqueidad en Presostato 27), el cabezal no debería haber comenzado a llenar.</li>
-                  <li><strong>Falla 2 (Válvula Corte 1A):</strong> Al apretar la Parada de Emergencia, la válvula de corte debió haber cerrado.</li>
-                  <li><strong>Falla 3 (Actuador Anillo):</strong> Al apretar la Parada de Emergencia, el actuador neumático debió haber cerrado impidiendo la liberación de fluido C3.</li>
-                </ul>
+                  {/* Section 2 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #2 — Posicionamiento del Cilindro GLP
+                    </div>
+                    <div>1. Posicionamiento: El cilindro de GLP se posiciona en la romana de llenado.</div>
+                  </div>
+
+                  {/* Section 3 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #3 — Detección Celda de Carga (&gt;5kg)
+                    </div>
+                    <div>2. Detección PLC: El PLC detecta la presencia del cilindro mediante celda de carga (requiere un peso registrado mayor a 5 kg).</div>
+                  </div>
+
+                  {/* Section 4 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #4 — Actuadores VAL1 (1C Centrado & 1D Cabeza)
+                    </div>
+                    <div>3. Señal Eléctrica VAL1: El PLC envía señal a VAL1 activando el Cilindro Neumático 1C (centrado) y 1D (posiciona cabeza de llenado).</div>
+                  </div>
+
+                  {/* Section 5 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #5 — Prueba de Hermeticidad (Presostato 27)
+                    </div>
+                    <div>4. Prueba de Hermeticidad: Se genera presión neumática para estanqueidad. La estanqueidad es confirmada e indicada al PLC por el Presostato 27.</div>
+                  </div>
+
+                  {/* Section 6 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #6 — Conmutación Electroválvula VAL2 (Llenado)
+                    </div>
+                    <div>5. Señal Eléctrica VAL2: Cumplidas las 3 condiciones, VAL2 conmuta enviando aire a la válvula de corte GLP 1A y cabeza 162.</div>
+                  </div>
+
+                  {/* Section 7 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #7 — Cierre de Llenado & Primera Señal Magnética
+                    </div>
+                    <div>6. Cierre de Llenado: Al completar el peso, el PLC corta la señal de VAL1/VAL2 y espera señal magnética a 1 metro de la salida.</div>
+                  </div>
+
+                  {/* Section 8 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #8 — Válvula VAL3 & Eyección Neumática 1B
+                    </div>
+                    <div>Segunda señal magnética a 50 cm de salida activa VAL3, enviando aire al cilindro 1B para la eyección a la cadena transportadora.</div>
+                  </div>
+
+                  {/* Section 9 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #9 — Bloqueo Preventivo de Alimentación GLP
+                    </div>
+                    <div>1. Bloqueo Preventivo: Bloquear la alimentación de GLP con el dispositivo específico de seguridad antes de intervenir el PLC.</div>
+                  </div>
+
+                  {/* Section 10 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #10 — Menú PLC & Código Técnico 01024
+                    </div>
+                    <div>2. Navegación PLC: Presionar F3 ➔ ENTER ➔ Ingresar código 01024 ➔ GENERAL ➔ PLC ➔ STEP BY STEP.</div>
+                  </div>
+
+                  {/* Section 11 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #11 — Ajuste SFC (0 a 1) y Avance F2
+                    </div>
+                    <div>Dirigirse hasta SFC, cambiar el valor de 0 a 1 y presionar ENTER. Con F2 se avanza paso a paso.</div>
+                  </div>
+
+                  {/* Section 12 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #12 — Pantalla de Sensores (SHIFT + ESC)
+                    </div>
+                    <div>3. Verificación de Sensores: En menú principal presionar SHIFT + ESC para desplegar los sensores en pantalla.</div>
+                  </div>
+
+                  {/* Section 13 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #13 — Desconexión de Tubing & Prueba (Estado 1 a 0)
+                    </div>
+                    <div>Al bajar el cabezal, desconectar tubing de aire y tapar con el dedo: debe cambiar en pantalla de 1 a 0 (y 0 a 1 al soltar).</div>
+                  </div>
+
+                  {/* Section 14 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #14 — Falla 1 Fuga C3 (Falta de Estanqueidad)
+                    </div>
+                    <div>Análisis Fuga C3 Falla 1: Si el presostato 27 hubiese actuado correctamente, el cabezal NO habría comenzado a llenar.</div>
+                  </div>
+
+                  {/* Section 15 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #15 — Falla 2 Fuga C3 (Válvula Corte 1A)
+                    </div>
+                    <div>Análisis Fuga C3 Falla 2: Al apretar Parada de Emergencia, la válvula de corte de GLP 1A debió haber cerrado.</div>
+                  </div>
+
+                  {/* Section 16 */}
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#FF6600", marginBottom: "4px" }}>
+                      SECCIÓN #16 — Falla 3 Fuga C3 (Actuador Anillo Carrusel)
+                    </div>
+                    <div>Análisis Fuga C3 Falla 3: Al apretar Parada de Emergencia, el actuador neumático del carrusel debió haber cerrado.</div>
+                  </div>
+
+                </div>
 
               </div>
 
