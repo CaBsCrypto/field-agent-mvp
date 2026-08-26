@@ -70,6 +70,7 @@ export default function AdminTrainingPage() {
   const [docs, setDocs] = useState<DocumentItem[]>(INITIAL_DOCS);
   const [generating, setGenerating] = useState(false);
   const [selectedDocModal, setSelectedDocModal] = useState<{ title: string; filename: string } | null>(null);
+  const [viewerTab, setViewerTab] = useState<"sections" | "reader">("sections");
   const [syncingSharePoint, setSyncingSharePoint] = useState(false);
   const [submittingEskuad, setSubmittingEskuad] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("SEC Chile / GLP");
@@ -579,16 +580,77 @@ export default function AdminTrainingPage() {
                     <CheckCircle size={16} color="#0284C7" />
                     <span>Documento parseado en <strong>16 Secciones Vectoriales</strong> cargadas en Supabase PGVector.</span>
                   </span>
-                  <span style={{ background: "#0284C7", color: "#FFF", padding: "2px 8px", borderRadius: "10px", fontSize: "11px", fontWeight: "700" }}>
-                    16/16 Chunks OK
-                  </span>
+                  
+                  {/* Mode Switcher Tabs */}
+                  <div style={{ display: "flex", gap: "4px", background: "#FFFFFF", padding: "3px", borderRadius: "8px", border: "1px solid #BAE6FD" }}>
+                    <button
+                      type="button"
+                      onClick={() => setViewerTab("sections")}
+                      style={{
+                        padding: "4px 10px",
+                        borderRadius: "6px",
+                        fontSize: "11px",
+                        fontWeight: "700",
+                        border: "none",
+                        cursor: "pointer",
+                        background: viewerTab === "sections" ? "#003366" : "transparent",
+                        color: viewerTab === "sections" ? "#FFFFFF" : "#0284C7"
+                      }}
+                    >
+                      📋 16 Secciones
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewerTab("reader")}
+                      style={{
+                        padding: "4px 10px",
+                        borderRadius: "6px",
+                        fontSize: "11px",
+                        fontWeight: "700",
+                        border: "none",
+                        cursor: "pointer",
+                        background: viewerTab === "reader" ? "#003366" : "transparent",
+                        color: viewerTab === "reader" ? "#FFFFFF" : "#0284C7"
+                      }}
+                    >
+                      📖 Texto Completo
+                    </button>
+                  </div>
                 </div>
 
-                <div style={{ fontWeight: "800", color: "#003366", marginBottom: "12px", fontSize: "14px" }}>
-                  📋 Desglose de las 16 Secciones Memorizadas:
-                </div>
+                {viewerTab === "reader" ? (
+                  /* Full Continuous Markdown View */
+                  <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "12px", padding: "20px" }}>
+                    <h4 style={{ color: "#003366", fontSize: "16px", fontWeight: "800", marginTop: 0 }}>1. Principio de Funcionamiento de Básculas SIRAGA & Hermeticidad</h4>
+                    <ol style={{ paddingLeft: "20px", margin: "10px 0" }}>
+                      <li><strong>Posicionamiento:</strong> El cilindro de GLP se posiciona en la romana de llenado.</li>
+                      <li><strong>Detección PLC:</strong> El PLC detecta la presencia del cilindro en el interior de la romana mediante la celda de carga (requiere un peso registrado mayor a 5 kg).</li>
+                      <li><strong>Señal Eléctrica VAL1:</strong> El PLC envía una señal eléctrica a la válvula VAL1 activando el cilindro 1C (centrado) y 1D (posiciona cabeza de llenado).</li>
+                      <li><strong>Prueba de Hermeticidad (Presostato 27):</strong> Se genera una presión neumática para asegurar la estanqueidad. La estanqueidad es confirmada e indicada al PLC por el <strong>Presostato 27</strong>.</li>
+                      <li><strong>Señal Eléctrica VAL2 (Llenado):</strong> Cumplidas las 3 condiciones, VAL2 conmuta enviando aire a la válvula de corte GLP 1A y cabeza de llenado 162.</li>
+                      <li><strong>Cierre de Llenado & Eyección (VAL3):</strong> Al completar el peso, se corta la señal de VAL1/VAL2 y con la señal magnética la válvula VAL3 activa el cilindro 1B para la eyección.</li>
+                    </ol>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <h4 style={{ color: "#003366", fontSize: "16px", fontWeight: "800", marginTop: "20px" }}>2. Guía Paso a Paso: Acceso a Revisión de Hermeticidad (Cabezal SIRAGA)</h4>
+                    <ul style={{ paddingLeft: "20px", margin: "10px 0" }}>
+                      <li><strong>Bloqueo Preventivo:</strong> Bloquear la alimentación de GLP con dispositivo específico.</li>
+                      <li><strong>Navegación PLC:</strong> Tecla <code>F3</code> ➔ <code>ENTER</code> ➔ Código <code>01024</code> ➔ <code>GENERAL</code> ➔ <code>PLC</code> ➔ <code>STEP BY STEP</code> ➔ Ajustar <code>SFC de 0 a 1</code>. Presionando F2 se avanza paso a paso.</li>
+                      <li><strong>Verificación de Sensores:</strong> Presionar <code>SHIFT + ESC</code> en menú principal. Al bajar el cabezal, desconectar el tubing de aire y bloquearlo con el dedo. El sensor debe cambiar de <code>1 a 0</code> al taparlo y de <code>0 a 1</code> al soltarlo. Si no conmuta, el <strong>Presostato 27 está defectuoso</strong>.</li>
+                    </ul>
+
+                    <h4 style={{ color: "#003366", fontSize: "16px", fontWeight: "800", marginTop: "20px" }}>3. Secuencia de Fallas & Análisis de Incidente (Fuga C3)</h4>
+                    <ul style={{ paddingLeft: "20px", margin: "10px 0" }}>
+                      <li><strong>Falla 1 (Hermeticidad):</strong> Si el sistema hubiese actuado (detectando falta de estanqueidad en Presostato 27), el cabezal no debería haber comenzado a llenar.</li>
+                      <li><strong>Falla 2 (Válvula Corte 1A):</strong> Al apretar la Parada de Emergencia, la válvula de corte debió haber cerrado.</li>
+                      <li><strong>Falla 3 (Actuador Anillo):</strong> Al apretar la Parada de Emergencia, el actuador neumático debió haber cerrado impidiendo la liberación de fluido C3.</li>
+                    </ul>
+                  </div>
+                ) : (
+                  /* 16 Vector Chunks Breakdown View */
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ fontWeight: "800", color: "#003366", marginBottom: "4px", fontSize: "14px" }}>
+                      📋 Desglose de las 16 Secciones Memorizadas:
+                    </div>
                   
                   {/* Section 1 */}
                   <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "12px 16px" }}>
@@ -717,9 +779,8 @@ export default function AdminTrainingPage() {
                     </div>
                     <div>Análisis Fuga C3 Falla 3: Al apretar Parada de Emergencia, el actuador neumático del carrusel debió haber cerrado.</div>
                   </div>
-
                 </div>
-
+              )}
               </div>
 
               {/* Modal Footer */}
