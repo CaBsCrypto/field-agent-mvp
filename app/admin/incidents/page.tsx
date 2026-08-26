@@ -17,34 +17,34 @@ interface IncidentItem {
 
 const MOCK_INCIDENTS: IncidentItem[] = [
   {
-    id: "INC-9482",
-    technicianName: "Carlos Muñoz (Técnico Climatización)",
-    techPhone: "+56987654321",
-    location: "Av. Las Condes 8820",
-    faultCode: "E-VRP-01",
-    description: "Fuga continua en la válvula de seguridad del estanque a granel.",
+    id: "INC-C3-001",
+    technicianName: "Roberto Araya (Especialista SIRAGA)",
+    techPhone: "+56955554321",
+    location: "Planta de Llenado GLP — Romana 4 (Carrusel C3)",
+    faultCode: "01024 / Presostato 27",
+    description: "Fuga C3 detectada por falta de conmutación 1->0 en sensor de hermeticidad Presostato 27.",
     status: "escalated",
-    timestamp: "Hace 15 mins",
+    timestamp: "Hace 10 mins",
   },
   {
-    id: "INC-8120",
-    technicianName: "Juan Pérez (Técnico HVAC)",
-    techPhone: "+56912345678",
-    location: "Av. Providencia 1234",
-    faultCode: "HVAC-200",
-    description: "Instalación completada y prueba de hermeticidad sin fallas.",
+    id: "INC-C3-002",
+    technicianName: "Roberto Araya (Especialista SIRAGA)",
+    techPhone: "+56955554321",
+    location: "Planta de Llenado GLP — Romana 2 (Cabezal SIRAGA)",
+    faultCode: "VAL1 / Actuador 1C",
+    description: "Prueba de estanqueidad completada exitosamente en cabezal Siraga tras cambio de tubing.",
     status: "resolved",
-    timestamp: "Hace 2 horas",
+    timestamp: "Hace 1 hora",
   },
   {
-    id: "INC-7431",
-    technicianName: "Juan Pérez (Técnico HVAC)",
-    techPhone: "+56912345678",
-    location: "Calle Suecia 450",
-    faultCode: "E-01",
-    description: "Reemplazo de sensor de temperatura defectuoso en equipo central.",
+    id: "INC-C3-003",
+    technicianName: "Roberto Araya (Especialista SIRAGA)",
+    techPhone: "+56955554321",
+    location: "Planta de Llenado GLP — Salida Carrusel C3",
+    faultCode: "VAL3 / Sensor Magnético",
+    description: "Verificación de eyección neumática a 50cm de la salida del carrusel realizada conforme a protocolo.",
     status: "resolved",
-    timestamp: "Ayer 16:30",
+    timestamp: "Ayer 15:30",
   },
 ];
 
@@ -70,10 +70,10 @@ export default function AdminIncidentsPage() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
             <div>
               <h2 style={{ fontSize: "18px", fontWeight: "700", color: "#003366", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-                <AlertTriangle size={18} color="#FF6600" /> Registro de Incidencias & Trabajos en Terreno
+                <AlertTriangle size={18} color="#FF6600" /> Monitoreo de Incidencias — Básculas SIRAGA & Fuga C3
               </h2>
               <p style={{ fontSize: "12px", color: "#64748B", margin: "4px 0 0 0" }}>
-                Monitoreo en tiempo real de los reportes estandarizados por los técnicos vía WhatsApp.
+                Monitoreo en tiempo real de los reportes en Planta de Llenado GLP estandarizados por Roberto Araya vía WhatsApp.
               </p>
             </div>
 
