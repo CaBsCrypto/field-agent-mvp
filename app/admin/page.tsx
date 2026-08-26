@@ -61,9 +61,6 @@ export default function AdminDashboardPage() {
             <div style={{ fontSize: "28px", fontWeight: "800", color: "#065F46" }}>100%</div>
             <div style={{ fontSize: "11px", color: "#059669", marginTop: "4px", fontWeight: "600" }}>⚡ Precisión RAG SIRAGA (Ejecutar Test)</div>
           </div>
-            <div style={{ fontSize: "28px", fontWeight: "800", color: "#0284C7" }}>42</div>
-            <div style={{ fontSize: "11px", color: "#059669", marginTop: "4px", fontWeight: "600" }}>⚡ Menos de 1.5s tiempo respuesta</div>
-          </div>
 
           {/* Card 4: Alerts */}
           <div
