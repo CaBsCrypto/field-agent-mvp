@@ -255,19 +255,19 @@ export default function AdminTrainingPage() {
             </button>
           </div>
 
-          {/* Vector Tracking Summary Stats */}
+          {/* Clean Summary Stats */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "24px" }}>
             <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", padding: "16px", borderRadius: "10px", textAlign: "center" }}>
-              <div style={{ fontSize: "11.5px", color: "#64748B", fontWeight: "600" }}>DOCUMENTOS INDEXADOS</div>
+              <div style={{ fontSize: "11.5px", color: "#64748B", fontWeight: "700" }}>MANUALES INDEXADOS</div>
               <div style={{ fontSize: "26px", fontWeight: "800", color: "#003366", marginTop: "4px" }}>{docs.length}</div>
             </div>
-            <div style={{ background: "#ECFDF5", border: "1px solid #A7F3D0", padding: "16px", borderRadius: "10px", textAlign: "center" }}>
-              <div style={{ fontSize: "11.5px", color: "#065F46", fontWeight: "600" }}>EMBEDDINGS VECTORIALES</div>
-              <div style={{ fontSize: "26px", fontWeight: "800", color: "#059669", marginTop: "4px" }}>{totalChunks}</div>
+            <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", padding: "16px", borderRadius: "10px", textAlign: "center" }}>
+              <div style={{ fontSize: "11.5px", color: "#64748B", fontWeight: "700" }}>FRAGMENTOS DE MEMORIA</div>
+              <div style={{ fontSize: "26px", fontWeight: "800", color: "#FF6600", marginTop: "4px" }}>{totalChunks} Secciones</div>
             </div>
-            <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", padding: "16px", borderRadius: "10px", textAlign: "center" }}>
-              <div style={{ fontSize: "11.5px", color: "#1E40AF", fontWeight: "600" }}>MOTOR VECTORIAL BASE</div>
-              <div style={{ fontSize: "15px", fontWeight: "700", color: "#1D4ED8", marginTop: "10px" }}>Supabase pgvector (768 dim)</div>
+            <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", padding: "16px", borderRadius: "10px", textAlign: "center" }}>
+              <div style={{ fontSize: "11.5px", color: "#64748B", fontWeight: "700" }}>ESTADO BASE DE DATOS</div>
+              <div style={{ fontSize: "15px", fontWeight: "800", color: "#059669", marginTop: "10px" }}>✓ Base Vectorial Activa</div>
             </div>
           </div>
 
@@ -303,7 +303,7 @@ export default function AdminTrainingPage() {
 
                 <div style={{ textAlign: "right", display: "flex", alignItems: "center", gap: "12px" }}>
                   <span style={{ fontSize: "12.5px", background: "#D1FAE5", color: "#065F46", padding: "6px 12px", borderRadius: "14px", fontWeight: "700", display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                    <CheckCircle size={14} /> {doc.chunksCount} Embeddings Activos
+                    <CheckCircle size={14} /> {doc.chunksCount} Secciones Indexadas
                   </span>
 
                   <button
