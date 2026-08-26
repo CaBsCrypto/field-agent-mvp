@@ -232,193 +232,105 @@ export default function AdminTrainingPage() {
         {/* Navigation Header */}
         <AdminHeader />
 
-        {/* Main Layout Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: "24px" }}>
+        {/* Clean Single Panel Layout */}
+        <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "14px", padding: "24px", boxShadow: "0 4px 16px rgba(0,0,0,0.03)" }}>
           
-          {/* Main Panel: Document Vector State Tracking & Interactive Tests */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-            
-
-
-            {/* Document Vector State Tracking Table */}
-            <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "14px", padding: "24px", boxShadow: "0 4px 16px rgba(0,0,0,0.03)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <div>
-                  <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#003366", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-                    <BookOpen size={18} color="#FF6600" /> Tracking de Estado Vectorial RAG ({docs.length} Manuales)
-                  </h2>
-                  <p style={{ fontSize: "12px", color: "#64748B", margin: "4px 0 0 0" }}>
-                    Monitoreo de manuales corporativos indexados y conteo de chunks/embeddings en Supabase.
-                  </p>
-                </div>
-                
-                <button
-                  type="button"
-                  onClick={() => alert("Sincronizando índice con Supabase Vector Store...")}
-                  style={{ background: "#F1F5F9", border: "1px solid #CBD5E1", padding: "8px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "600", cursor: "pointer", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}
-                >
-                  <RefreshCw size={14} /> Re-sincronizar Vector Store
-                </button>
-              </div>
-
-              {/* Vector Tracking Summary Stats */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: "20px" }}>
-                <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", padding: "12px", borderRadius: "8px", textAlign: "center" }}>
-                  <div style={{ fontSize: "11px", color: "#64748B", fontWeight: "600" }}>Total Documentos Indexados</div>
-                  <div style={{ fontSize: "20px", fontWeight: "800", color: "#003366", marginTop: "2px" }}>{docs.length}</div>
-                </div>
-                <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", padding: "12px", borderRadius: "8px", textAlign: "center" }}>
-                  <div style={{ fontSize: "11px", color: "#64748B", fontWeight: "600" }}>Chunks / Embeddings Totales</div>
-                  <div style={{ fontSize: "20px", fontWeight: "800", color: "#FF6600", marginTop: "2px" }}>{totalChunks}</div>
-                </div>
-                <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", padding: "12px", borderRadius: "8px", textAlign: "center" }}>
-                  <div style={{ fontSize: "11px", color: "#64748B", fontWeight: "600" }}>Motor RAG Base</div>
-                  <div style={{ fontSize: "13px", fontWeight: "700", color: "#065F46", marginTop: "6px" }}>pgvector / Supabase</div>
-                </div>
-              </div>
-
-              {/* Document List */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                {docs.map((doc, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      padding: "16px",
-                      borderRadius: "10px",
-                      border: "1px solid #E2E8F0",
-                      background: "#F8FAFC",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between"
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                      <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: doc.source?.includes("SharePoint") ? "#E0F2FE" : doc.source?.includes("Eskuad") ? "#FEF3C7" : "#F3E8FF", color: doc.source?.includes("SharePoint") ? "#0284C7" : doc.source?.includes("Eskuad") ? "#D97706" : "#7E22CE", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <FileText size={20} />
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: "700", fontSize: "14px", color: "#0F172A" }}>{doc.name}</div>
-                        <div style={{ display: "flex", gap: "8px", fontSize: "11px", color: "#64748B", marginTop: "4px", alignItems: "center", flexWrap: "wrap" }}>
-                          <span style={{ background: "#FEF3C7", color: "#92400E", padding: "2px 6px", borderRadius: "4px", fontWeight: "600" }}>{doc.category}</span>
-                          {doc.source && (
-                            <span style={{ background: "#E2E8F0", color: "#334155", padding: "2px 6px", borderRadius: "4px", fontWeight: "600" }}>📡 {doc.source}</span>
-                          )}
-                          <span>Tamaño: {doc.size}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={{ textAlign: "right", display: "flex", alignItems: "center", gap: "10px" }}>
-                      <span style={{ fontSize: "12px", background: "#D1FAE5", color: "#065F46", padding: "4px 10px", borderRadius: "12px", fontWeight: "700", display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                        <CheckCircle size={12} /> {doc.chunksCount} Embeddings Activos
-                      </span>
-
-                      <button
-                        type="button"
-                        onClick={() => setSelectedDocModal({
-                          title: "Documento Técnico Oficial Abastible — Básculas SIRAGA & Fuga C3",
-                          filename: doc.name
-                        })}
-                        style={{
-                          background: "#003366",
-                          color: "#FFFFFF",
-                          border: "none",
-                          borderRadius: "6px",
-                          padding: "6px 12px",
-                          fontSize: "11px",
-                          fontWeight: "700",
-                          cursor: "pointer",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "4px"
-                        }}
-                      >
-                        🔍 Ver Documento ➔
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
+          {/* Header */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid #F1F5F9", paddingBottom: "16px" }}>
+            <div>
+              <h2 style={{ fontSize: "17px", fontWeight: "700", color: "#003366", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+                <BookOpen size={20} color="#FF6600" /> Base de Conocimiento Vectorial RAG — Abastible
+              </h2>
+              <p style={{ fontSize: "12.5px", color: "#64748B", margin: "4px 0 0 0" }}>
+                Manuales técnicos oficiales indexados en Supabase PGVector que alimentan las respuestas del bot.
+              </p>
             </div>
 
+            <button
+              type="button"
+              onClick={() => alert("✓ Índice vectorial 100% sincronizado con Supabase PGVector.")}
+              style={{ background: "#F1F5F9", border: "1px solid #CBD5E1", padding: "8px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "600", cursor: "pointer", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}
+            >
+              <RefreshCw size={14} /> Estado Sincronizado
+            </button>
           </div>
 
-          {/* Right Panel: File Upload & AI Manual Generator */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-            
-            {/* Box 1: File Uploader */}
-            <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "14px", padding: "20px", boxShadow: "0 4px 16px rgba(0,0,0,0.03)" }}>
-              <h3 style={{ fontSize: "14px", fontWeight: "700", color: "#003366", marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
-                <Upload size={16} color="#FF6600" /> Cargar Nuevo Documento Técnico
-              </h3>
-              <p style={{ fontSize: "12px", color: "#64748B", marginBottom: "14px" }}>
-                Sube archivos en formato PDF, Word (DOCX) o Markdown.
-              </p>
-              
-              <div 
-                onClick={() => alert("Simulando selección de archivo PDF/DOCX corporativo...")}
-                style={{ border: "2px dashed #CBD5E1", borderRadius: "10px", padding: "20px", textAlign: "center", background: "#F8FAFC", cursor: "pointer", transition: "all 0.2s" }}
-              >
-                <Upload size={24} color="#003366" style={{ margin: "0 auto 6px auto", display: "block" }} />
-                <div style={{ fontSize: "12px", fontWeight: "700", color: "#003366" }}>Seleccionar archivo PDF/DOCX</div>
-              </div>
+          {/* Vector Tracking Summary Stats */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "24px" }}>
+            <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", padding: "16px", borderRadius: "10px", textAlign: "center" }}>
+              <div style={{ fontSize: "11.5px", color: "#64748B", fontWeight: "600" }}>DOCUMENTOS INDEXADOS</div>
+              <div style={{ fontSize: "26px", fontWeight: "800", color: "#003366", marginTop: "4px" }}>{docs.length}</div>
             </div>
+            <div style={{ background: "#ECFDF5", border: "1px solid #A7F3D0", padding: "16px", borderRadius: "10px", textAlign: "center" }}>
+              <div style={{ fontSize: "11.5px", color: "#065F46", fontWeight: "600" }}>EMBEDDINGS VECTORIALES</div>
+              <div style={{ fontSize: "26px", fontWeight: "800", color: "#059669", marginTop: "4px" }}>{totalChunks}</div>
+            </div>
+            <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", padding: "16px", borderRadius: "10px", textAlign: "center" }}>
+              <div style={{ fontSize: "11.5px", color: "#1E40AF", fontWeight: "600" }}>MOTOR VECTORIAL BASE</div>
+              <div style={{ fontSize: "15px", fontWeight: "700", color: "#1D4ED8", marginTop: "10px" }}>Supabase pgvector (768 dim)</div>
+            </div>
+          </div>
 
-            {/* Box 2: AI Manual Generator */}
-            <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "14px", padding: "20px", boxShadow: "0 4px 16px rgba(0,0,0,0.03)", borderTop: "4px solid #FF6600" }}>
-              <h3 style={{ fontSize: "14px", fontWeight: "700", color: "#003366", marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
-                <Sparkles size={16} color="#FF6600" /> Generar Manual Técnico con IA
-              </h3>
-
-              <div style={{ marginBottom: "12px" }}>
-                <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", display: "block", marginBottom: "4px" }}>Categoría del Manual:</label>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #CBD5E1", background: "#F8FAFC", fontSize: "12px" }}
-                >
-                  <option value="SEC Chile / GLP">SEC Chile / GLP</option>
-                  <option value="Abastible Granel">Abastible Granel</option>
-                  <option value="Procedimientos Generales">Procedimientos Generales</option>
-                </select>
-              </div>
-
-              <div style={{ marginBottom: "14px" }}>
-                <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", display: "block", marginBottom: "4px" }}>Prompt de Estandarización:</label>
-                <textarea
-                  rows={3}
-                  value={aiPrompt}
-                  onChange={(e) => setAiPrompt(e.target.value)}
-                  style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #CBD5E1", background: "#F8FAFC", fontSize: "12px", outline: "none", resize: "none" }}
-                />
-              </div>
-
-              <button
-                type="button"
-                onClick={handleGenerateManualWithAI}
-                disabled={generating}
+          {/* Document Table */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {docs.map((doc, idx) => (
+              <div
+                key={idx}
                 style={{
-                  width: "100%",
-                  background: "#FF6600",
-                  border: "none",
-                  borderRadius: "8px",
-                  padding: "12px",
-                  color: "#FFFFFF",
-                  fontWeight: "700",
-                  cursor: "pointer",
-                  fontSize: "13px",
+                  padding: "18px 20px",
+                  borderRadius: "12px",
+                  border: "1px solid #CBD5E1",
+                  background: "#FFFFFF",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px"
+                  justifyContent: "space-between",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.02)"
                 }}
               >
-                {generating ? <RefreshCw size={16} className="animate-spin" /> : <Sparkles size={16} />} 
-                {generating ? "Generando e Indexando Manual..." : "Generar Manual con IA"}
-              </button>
-            </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                  <div style={{ width: "44px", height: "44px", borderRadius: "10px", background: "#FEF3C7", color: "#D97706", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <FileText size={22} />
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: "700", fontSize: "14.5px", color: "#003366" }}>{doc.name}</div>
+                    <div style={{ display: "flex", gap: "8px", fontSize: "11.5px", color: "#64748B", marginTop: "4px", alignItems: "center", flexWrap: "wrap" }}>
+                      <span style={{ background: "#FF6600", color: "#FFF", padding: "2px 8px", borderRadius: "4px", fontWeight: "700" }}>{doc.category}</span>
+                      <span style={{ background: "#E2E8F0", color: "#334155", padding: "2px 8px", borderRadius: "4px", fontWeight: "600" }}>📡 Presentación PPTX Oficial Abastible</span>
+                      <span>Tamaño: {doc.size}</span>
+                    </div>
+                  </div>
+                </div>
 
+                <div style={{ textAlign: "right", display: "flex", alignItems: "center", gap: "12px" }}>
+                  <span style={{ fontSize: "12.5px", background: "#D1FAE5", color: "#065F46", padding: "6px 12px", borderRadius: "14px", fontWeight: "700", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                    <CheckCircle size={14} /> {doc.chunksCount} Embeddings Activos
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedDocModal({
+                      title: "Documento Técnico Oficial Abastible — Básculas SIRAGA & Fuga C3",
+                      filename: doc.name
+                    })}
+                    style={{
+                      background: "#003366",
+                      color: "#FFFFFF",
+                      border: "none",
+                      borderRadius: "8px",
+                      padding: "8px 14px",
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px"
+                    }}
+                  >
+                    🔍 Ver Documento ➔
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
 
         </div>
